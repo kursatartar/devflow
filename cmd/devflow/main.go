@@ -1,4 +1,4 @@
-package devflow
+package main
 
 import "fmt"
 
