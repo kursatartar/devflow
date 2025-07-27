@@ -1,7 +1,3 @@
-module github.com/kursatartar/devflow
+module github.com/kursatartar/devflowv2
 
 go 1.24.5
-
-
-// dependency management,,,, version management,,,,,
-//
