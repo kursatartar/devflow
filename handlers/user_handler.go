@@ -2,13 +2,17 @@ package handlers
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/kursatartar/devflowv2/models"
 )
 
-func CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) {
-	user := models.NewUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL)
+const (
+	StatusPending = "pending"
+	StatusActive  = "active"
+	StatusDone    = "done"
+)
+
+func CreateUser(id, username, email, passwordHash, role string, profile models.Profile) {
+	user := models.NewUser(id, username, email, passwordHash, role, profile)
 	models.Users[id] = user
 	fmt.Println("user created:", user)
 }
@@ -16,23 +20,20 @@ func CreateUser(id, username, email, passwordHash, role, firstName, lastName, av
 func ListUsers() {
 	fmt.Println("all users:")
 	for id, user := range models.Users {
-		fmt.Printf("- id: %s, name: %s, e-mail: %s\n", id, user.Username, user.Email)
+		fmt.Printf("- %s: %s %s (%s)\n", id, user.Profile.FirstName, user.Profile.LastName, user.Email)
 	}
 }
 
-func UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole, newFirstName, newLastName, newAvatarURL string) {
+func UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole string, newProfile models.Profile) {
 	if user, exists := models.Users[id]; exists {
 		user.Username = newUsername
 		user.Email = newEmail
 		user.PasswordHash = newPasswordHash
 		user.Role = newRole
-		user.Profile.FirstName = newFirstName
-		user.Profile.LastName = newLastName
-		user.Profile.AvatarURL = newAvatarURL
-		user.UpdatedAt = time.Now().Format(time.RFC3339)
-
+		user.Profile = newProfile
+		user.UpdatedAt = user.UpdatedAt.UTC()
 		models.Users[id] = user
-		fmt.Println("user updated:", user.Username)
+		fmt.Println("user updated:", user)
 	} else {
 		fmt.Println("user not found")
 	}
