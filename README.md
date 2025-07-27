@@ -1,69 +1,66 @@
-# devflowv2
+# DevFlow v0.2
 
-bu projede go ile çalışırken user, project ve task gibi şeyleri nasıl oluşturup yöneteceğimi denedim.  
-bütün verileri bellekte tuttum. database yok, dosya yazma yok.  
-her şey map ve struct'lar üzerinden dönüyor.
+## Proje Tanımı
+Bu projede Go diliyle user, project ve task gibi kavramları nasıl oluşturup yöneteceğimi denedim.  
+Tüm veriler bellekte tutuluyor. Dosya ya da veritabanı kullanımı yok.  
+Amaç sadece öğrendiğim Go kavramlarını uygulamak ve geliştirmekti.
 
-projenin amacı sadece öğremdiklerimi uygulamak.  
-başta map kullandım, sonra struct öğrendim, onları entegre ettim.  
-şimdilik sadece main.go'dan manuel olarak fonksiyonları çağırıp test ediyorum.
+## Özellikler
+- User, Project ve Task oluşturma, listeleme, güncelleme ve silme işlemleri
+- Task'ların bir projeye bağlı olacak şekilde tanımlanması (ProjectID alanı üzerinden)
+- Struct yapıları ve map kullanımı
+- Varlık kontrolü (`value, ok := map[key]`)
+- `Profile` gibi iç içe struct kullanımı
+- Status bilgileri için `const` sabitleri (`StatusPending`, `StatusActive`, vs.)
+- JSON tag’leri yorum satırı olarak eklendi (ileride API’ye dönüşebilir)
 
-## proje yapısı
+## Proje Yapısı  
 
-cmd/  
-→ main.go burada. uygulama buradan başlatılıyor.
+cmd/
 
-models/  
-→ user, project ve task struct'ları burada tanımlı  
-→ ayrıca onları tuttuğumuz map'ler de burada
+└── main.go // Uygulamanın giriş noktası
 
-handlers/  
-→ user_handler.go: user işlemleri  
-→ project_handler.go: project işlemleri  
-→ task_handler.go: task işlemleri  
-→ hepsi create, list, update, delete içeriyor
+models/
 
-## ilk versiyon (v0.1 diyebilirim)
+├── user.go // User struct'ı ve map
 
-başta map[string]string kullanarak user'ları tuttum  
-örneğin id -> name gibi  
-crud işlemlerini handlers/user_handler.go içinde yazdım  
-main.go dosyasından çağırarak test ettim
+├── project.go // Project struct'ı ve map
 
-## v0.2'de yaptıklarım
+└── task.go // Task struct'ı ve map
 
-go'da struct yapısını öğrendim  
-user'ı artık struct olarak tanımladım: id, name, email
+handlers/
 
-map[string]User yapısına geçtik  
-crud fonksiyonları struct'a göre güncellendi  
-aynı şekilde project ve task için de struct'lar oluşturdum
+├── user_handler.go // User CRUD işlemleri
 
-task struct'ı içinde ProjectID alanı var  
-bu sayede bir görevin hangi projeye ait olduğunu biliyoruz  
-task'ı oluştururken geçerli bir proje id verilmesi gerekiyor
+├── project_handler.go // Project CRUD işlemleri
 
-## dikkat ettiğim bazı şeyler
-
-- update işlemlerinde struct'ı map'ten alıp alanlarını değiştirdim, sonra geri map'e koydum
-- map erişiminde `value, ok := map[key]` şeklinde kontrol yaptım. (value yerine "_" de kullanabilirim çünkü burada bana lazım olan value değil, sadece ok değerinin true veya false dönmesi çünkü böyle bir değer var mı diye kontrol etmek istiyorum.)
-- ikinci değer (ok) daima bool olur. true = key var, false = yok. go dilinde bir kural.
+└── task_handler.go // Task CRUD işlemleri
 
 
+## Versiyonlar
 
+### v0.1
+- `map[string]string` ile sadece `id -> name` tutularak user işlemleri denendi
+- CRUD işlemleri sadece user için yapıldı
+- Her şey basit fonksiyonlarla yönetildi
 
+### v0.2
+- Struct kullanımı eklendi (User, Project, Task)
+- Map’ler `map[string]User`, `map[string]Project`, vs. olarak güncellendi
+- Project ve Task yapıları detaylandırıldı
+- Task’lara ProjectID ilişkisi eklendi
+- `main.go` üzerinden elle test yapılarak geliştirildi
 
-## diğer notlar
+## Dikkat Edilen Noktalar
+- Update işlemlerinde struct map’ten alınıp güncellenip tekrar map’e atandı
+- Map erişimlerinde `if _, ok := map[id]; ok` şeklinde kontrol kullanıldı
+- Tüm ID’ler elle veriliyor, otomatik ID üretimi yapılmadı
+- Aynı ID ile tekrar create edilirse eski veri üzerine yazılır
+- `projectID`, `assignedTo` gibi alanlar string olarak tutuldu çünkü `"p1"`, `"u2"` gibi okunabilir ID’ler kullanıldı
+- Bellekte tutulduğu için uygulama kapanınca tüm veriler silinir
+- Projede şu an sadece Task → Project arasında ilişki var
 
-- repo'da her değişiklikten sonra terminale git status yazdım, burada hangi dosyalarda değişiklik yaptığımı görerek sonrasında "git add" komutu ile pushlayacağım dosyaları ekledim. sonrasında git commit -m "commit notu" ve push kullanarak kodumu repomda güncelledim.
-- bellekte veri tuttuğum için uygulama kapanınca her şey silinir. kalıcılık yok.
-- user, project ve task’lar arasında şu an yalnızca task → project ilişkisi var
-- tüm id’ler elle veriliyor. otomatik id üretimi yapılmadı
-- aynı id ile tekrar create yaparsam eskisinin üstüne yazar, uyarı verilmez  
-- input kullanıcıdan alınmıyor, main.go'dan manuel test yapılıyor
-- project ve task id'lerini string olarak tuttum çünkü "p1", "p2" gibi isimler kullandım  eğer sadece sayı kullansaydım (1, 2, 3...), o zaman int daha mantıklı olurdu
-ama string olması şu an hem esnek hem okunabilir oldu, işimi kolaylaştırdı  
-- Project adında bir struct tanımladım, her projenin id, name ve description bilgisi var
-- Projects adında bir map oluşturdum, string id'leri key olarak kullanıyorum
-ve map'in içindeki her değer bir Project struct'ı yani tüm proje bilgilerini içeriyor. bu sayede birden fazla projeyi tek yerde tutabiliyorum ve id ile erişiyorum
-
+## Ek Notlar
+- Input’lar kullanıcıdan alınmıyor, `main.go` üzerinden manuel fonksiyon çağrılarıyla test ediliyor
+- JSON tag’leri şimdilik yorum satırına eklendi, ileride API'ye geçilirse aktif edilebilir
+- Kod sade, fonksiyonel, öğrenim odaklı tutuldu  
