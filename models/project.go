@@ -37,3 +37,20 @@ func NewProject(id, name, description, ownerID string, teamMembers []string, sta
 		UpdatedAt: time.Now().Format(time.RFC3339),
 	}
 }
+
+// type Project struct {
+//   ID          string   // `json:"id"`
+//   Name        string   // `json:"name"`
+//   Description string   // `json:"description"`
+//   OwnerID     string   // `json:"owner_id"`
+//   TeamMembers []string // `json:"team_members"`
+//   Status      string   // `json:"status"`
+//   Settings    Settings // `json:"settings"`
+//   CreatedAt   string   // `json:"created_at"`
+//   UpdatedAt   string   // `json:"updated_at"`
+// }
+
+// type Settings struct {
+//   IsPrivate    bool     // `json:"is_private"`
+//   TaskWorkflow []string // `json:"task_workflow"`
+// }
