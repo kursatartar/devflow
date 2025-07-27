@@ -1,32 +1,48 @@
 package main
 
-import "github.com/kursatartar/devflowv2/handlers"
+import (
+	"fmt"
+
+	"github.com/kursatartar/devflowv2/handlers"
+)
 
 func main() {
-	handlers.CreateUser("1", "Kürşat", "kursatartar@k.com")
-	handlers.CreateUser("2", "Burak", "burakgurbuz@b.com")
-	handlers.CreateUser("2", "Hasan", "hasanyilmaz@h.com")
-	handlers.CreateUser("2", "Coşkun", "coskunates@c.com")
+	// USERS
+	handlers.CreateUser("u1", "kursatartar", "kursat@example.com", "hash1", "admin", "Kürşat", "Artar", "avatar1.png")
+	handlers.CreateUser("u2", "burakgurbuz", "burak@example.com", "hash2", "user", "Burak", "Gürbüz", "avatar2.png")
+	handlers.CreateUser("u3", "hasanyilmaz", "hasan@example.com", "hash3", "user", "Hasan", "Yılmaz", "avatar3.png")
+	handlers.CreateUser("u4", "coskunates", "coskun@example.com", "hash4", "user", "Coşkun", "Ateş", "avatar4.png")
+
 	handlers.ListUsers()
+	fmt.Println()
 
-	handlers.UpdateUser("1", "Kürşat Artar", "kursatartar@devflow.com")
-	handlers.DeleteUser("2")
-	handlers.ListUsers()
+	// PROJECTS
+	handlers.CreateProject(
+		"p1", "DevFlow", "İlk CLI tabanlı proje", "u1", "active",
+		[]string{"u1", "u2"}, false, []string{"todo", "in-progress", "done"},
+	)
+	handlers.CreateProject(
+		"p2", "DevFlowV2", "Struct ve Mongo uyumlu versiyon", "u2", "planning",
+		[]string{"u2", "u3"}, true, []string{"backlog", "review", "done"},
+	)
 
-	handlers.CreateProject("p1", "DevFlow", "improving development skills")
-	handlers.CreateProject("p2", "Go-bot", "slack bot in go")
 	handlers.ListProjects()
+	fmt.Println()
+	handlers.CreateTask(
+		"t1", "Struct Kullanımı", "Go'da struct nasıl tanımlanır ve kullanılır?",
+		"p1", "u1", "u1", "todo", "medium", "2025-07-30T12:00:00Z",
+		[]string{"go", "struct"}, 2.5, 0.5,
+	)
+	handlers.CreateTask(
+		"t2", "Maps ile Veri Saklama", "Go'da map yapısıyla verileri nasıl organize ederiz?",
+		"p2", "u2", "u2", "in-progress", "high", "2025-08-01T18:00:00Z",
+		[]string{"go", "map"}, 3.0, 1.2,
+	)
+	handlers.CreateTask(
+		"t3", "Pointer Mantığı", "Go'da pointer nasıl çalışır, neden kullanılır?",
+		"p2", "u3", "u2", "todo", "low", "2025-08-03T15:30:00Z",
+		[]string{"go", "pointer"}, 1.5, 0.0,
+	)
 
-	handlers.UpdateProject("p2", "Go-bot 2.0", "updated go bot project")
-	handlers.DeleteProject("p1")
-	handlers.ListProjects()
-
-	handlers.CreateProject("p1", "DevFlow", "...")
-	handlers.CreateTask("t1", "initialize repo", "todo", "p1")
-	handlers.CreateTask("t2", "write handlers", "in-progress", "p1")
 	handlers.ListTasks()
-	handlers.UpdateTask("t2", "write handlers v2", "done", "p1")
-	handlers.DeleteTask("t1")
-	handlers.ListTasks()
-
 }
