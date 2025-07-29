@@ -2,11 +2,6 @@ package models
 
 import "time"
 
-type ProjectSettings struct {
-	IsPrivate    bool
-	TaskWorkflow []string
-}
-
 type Project struct {
 	ID          string
 	Name        string
@@ -15,13 +10,19 @@ type Project struct {
 	TeamMembers []string
 	Status      string
 	Settings    ProjectSettings
-	CreatedAt   string
-	UpdatedAt   string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+type ProjectSettings struct {
+	IsPrivate    bool
+	TaskWorkflow []string
 }
 
 var Projects = map[string]Project{}
 
 func NewProject(id, name, description, ownerID string, teamMembers []string, status string, isPrivate bool, taskWorkflow []string) Project {
+	now := time.Now().UTC()
 	return Project{
 		ID:          id,
 		Name:        name,
@@ -33,9 +34,19 @@ func NewProject(id, name, description, ownerID string, teamMembers []string, sta
 			IsPrivate:    isPrivate,
 			TaskWorkflow: taskWorkflow,
 		},
-		CreatedAt: time.Now().Format(time.RFC3339),
-		UpdatedAt: time.Now().Format(time.RFC3339),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
+}
+
+func (p *Project) Update(newName, newDescription, newStatus string, newTeam []string, newIsPrivate bool, newWorkflow []string) {
+	p.Name = newName
+	p.Description = newDescription
+	p.Status = newStatus
+	p.TeamMembers = newTeam
+	p.Settings.IsPrivate = newIsPrivate
+	p.Settings.TaskWorkflow = newWorkflow
+	p.UpdatedAt = time.Now().UTC()
 }
 
 // type Project struct {

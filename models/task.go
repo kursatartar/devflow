@@ -2,11 +2,6 @@ package models
 
 import "time"
 
-type TimeTracking struct {
-	EstimatedHours float64
-	LoggedHours    float64
-}
-
 type Task struct {
 	ID           string
 	Title        string
@@ -17,15 +12,24 @@ type Task struct {
 	Status       string
 	Priority     string
 	Labels       []string
-	DueDate      string
+	DueDate      time.Time
 	TimeTracking TimeTracking
-	CreatedAt    string
-	UpdatedAt    string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+type TimeTracking struct {
+	EstimatedHours float64
+	LoggedHours    float64
 }
 
 var Tasks = map[string]Task{}
 
-func NewTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) Task {
+func NewTask(
+	id, title, description, projectID, assignedTo, createdBy, status, priority string,
+	dueDate time.Time, labels []string, estimated, logged float64,
+) Task {
+	now := time.Now().UTC()
 	return Task{
 		ID:          id,
 		Title:       title,
@@ -41,9 +45,25 @@ func NewTask(id, title, description, projectID, assignedTo, createdBy, status, p
 			EstimatedHours: estimated,
 			LoggedHours:    logged,
 		},
-		CreatedAt: time.Now().Format(time.RFC3339),
-		UpdatedAt: time.Now().Format(time.RFC3339),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
+}
+
+func (t *Task) Update(
+	newTitle, newDescription, newStatus, newPriority string,
+	newDueDate time.Time, newLabels []string,
+	newEstimated, newLogged float64,
+) {
+	t.Title = newTitle
+	t.Description = newDescription
+	t.Status = newStatus
+	t.Priority = newPriority
+	t.DueDate = newDueDate
+	t.Labels = newLabels
+	t.TimeTracking.EstimatedHours = newEstimated
+	t.TimeTracking.LoggedHours = newLogged
+	t.UpdatedAt = time.Now().UTC()
 }
 
 // type Task struct {
