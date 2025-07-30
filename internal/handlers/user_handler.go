@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"devflow/internal/models"
 	"fmt"
-	"github.com/kursatartar/devflowv2/models"
 )
 
 const (

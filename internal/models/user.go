@@ -35,6 +35,7 @@ func NewUser(id, username, email, passwordHash, role string, profile Profile) Us
 		CreatedAt:    now,
 		UpdatedAt:    now,
 	}
+
 }
 
 // type User struct {

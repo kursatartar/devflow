@@ -1,6 +1,6 @@
 package main
 
-import "github.com/kursatartar/devflowv2/handlers"
+import "devflow/internal/handlers"
 
 func main() {
 	handlers.CreateUser("1", "Kürşat", "kursatartar@k.com")

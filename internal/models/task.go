@@ -19,11 +19,13 @@ type Task struct {
 	Labels       []string
 	DueDate      string
 	TimeTracking TimeTracking
-	CreatedAt    string
+	CreatedAt    string // time.time
 	UpdatedAt    string
 }
 
-var Tasks = map[string]Task{}
+// pointerı tek bir değerde deneyelim
+
+var Tasks = map[string]*Task{}
 
 func NewTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) Task {
 	return Task{

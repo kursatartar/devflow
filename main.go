@@ -1,18 +1,25 @@
 package main
 
 import (
+	"devflow/internal/models"
 	"fmt"
 
-	"github.com/kursatartar/devflowv2/handlers"
+	"devflow/internal/handlers"
 )
 
 func main() {
 	// USERS
-	handlers.CreateUser("u1", "kursatartar", "kursat@example.com", "hash1", "admin", "Kürşat", "Artar", "avatar1.png")
-	handlers.CreateUser("u2", "burakgurbuz", "burak@example.com", "hash2", "user", "Burak", "Gürbüz", "avatar2.png")
-	handlers.CreateUser("u3", "hasanyilmaz", "hasan@example.com", "hash3", "user", "Hasan", "Yılmaz", "avatar3.png")
-	handlers.CreateUser("u4", "coskunates", "coskun@example.com", "hash4", "user", "Coşkun", "Ateş", "avatar4.png")
+	handlers.CreateUser("u1", "kursatartar", "kursat@example.com", "hash1", "admin",
+		models.Profile{FirstName: "Kürşat", LastName: "Artar", AvatarURL: "avatar1.png"})
 
+	handlers.CreateUser("u2", "burakgurbuz", "burak@example.com", "hash2", "user",
+		models.Profile{FirstName: "Burak", LastName: "Gürbüz", AvatarURL: "avatar2.png"})
+
+	handlers.CreateUser("u3", "hasanyilmaz", "hasan@example.com", "hash3", "user",
+		models.Profile{FirstName: "Hasan", LastName: "Yılmaz", AvatarURL: "avatar3.png"})
+
+	handlers.CreateUser("u4", "coskunates", "coskun@example.com", "hash4", "user",
+		models.Profile{FirstName: "Coşkun", LastName: "Ateş", AvatarURL: "avatar4.png"})
 	handlers.ListUsers()
 	fmt.Println()
 

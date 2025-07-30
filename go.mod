@@ -1,3 +1,3 @@
-module github.com/kursatartar/devflowv2
+module devflow
 
 go 1.24.5

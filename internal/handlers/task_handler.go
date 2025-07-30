@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"devflow/internal/models"
 	"fmt"
-	"github.com/kursatartar/devflowv2/models"
 )
 
 func CreateTask(
@@ -11,7 +11,7 @@ func CreateTask(
 	labels []string, estimated, logged float64,
 ) {
 	task := models.NewTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate, labels, estimated, logged)
-	models.Tasks[id] = task
+	models.Tasks[id] = &task
 	fmt.Println("task created:", task.Title)
 }
 
@@ -37,8 +37,6 @@ func UpdateTask(
 		task.TimeTracking.EstimatedHours = newEstimated
 		task.TimeTracking.LoggedHours = newLogged
 		task.UpdatedAt = models.NewTask(id, "", "", "", "", "", "", "", "", nil, 0, 0).UpdatedAt
-
-		models.Tasks[id] = task
 		fmt.Println("task updated:", task.Title)
 	} else {
 		fmt.Println("task not found!")
