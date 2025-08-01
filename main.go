@@ -53,3 +53,48 @@ func main() {
 
 	handlers.ListTasks()
 }
+
+/*
+package main
+
+import (
+	"flag"
+	"fmt"
+
+	"devflow/internal/models"
+	"devflow/internal/handlers"
+)
+
+func main() {
+	action := flag.String("action", "", "create veya list")
+	username := flag.String("username", "", "kullanıcı adı")
+	email := flag.String("email", "", "e-posta")
+	password := flag.String("password", "", "şifre hash")
+	role := flag.String("role", "user", "kullanıcı rolü")
+	firstName := flag.String("firstName", "", "ad")
+	lastName := flag.String("lastName", "", "soyad")
+	avatar := flag.String("avatar", "", "avatar url")
+
+	flag.Parse()
+
+	switch *action {
+	case "create":
+		if *username == "" || *email == "" || *password == "" || *firstName == "" || *lastName == "" {
+			fmt.Println("eksik bilgi")
+			return
+		}
+		id := *username
+		profile := models.Profile{
+			FirstName: *firstName,
+			LastName:  *lastName,
+			AvatarURL: *avatar,
+		}
+		handlers.CreateUser(id, *username, *email, *password, *role, profile)
+
+	case "list":
+		handlers.ListUsers()
+
+	default:
+		fmt.Println("geçerli bir action gir: create veya list")
+	}
+*/
