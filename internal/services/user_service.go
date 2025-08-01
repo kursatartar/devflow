@@ -10,6 +10,7 @@ type UserService interface {
 	ListUsers()
 	UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole string, newProfile models.Profile)
 	DeleteUser(id string)
+	FilterUsersByRole(role string) []models.User
 }
 
 type userService struct{}
@@ -29,6 +30,16 @@ func (s *userService) ListUsers() {
 	for id, user := range models.Users {
 		fmt.Printf("- %s: %s %s (%s)\n", id, user.Profile.FirstName, user.Profile.LastName, user.Email)
 	}
+}
+
+func (s *userService) FilterUsersByRole(role string) []models.User {
+	var filtered []models.User
+	for _, u := range models.Users {
+		if u.Role == role {
+			filtered = append(filtered, u)
+		}
+	}
+	return filtered
 }
 
 func (s *userService) UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole string, newProfile models.Profile) {
@@ -53,4 +64,5 @@ func (s *userService) DeleteUser(id string) {
 	} else {
 		fmt.Println("user not found")
 	}
+
 }

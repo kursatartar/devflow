@@ -52,6 +52,10 @@ func main() {
 	)
 
 	handlers.ListTasks()
+
+	fmt.Println("only admins:")
+	handlers.ListUsersByRole("admin")
+
 }
 
 /*
