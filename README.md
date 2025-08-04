@@ -14,7 +14,7 @@ Amaç sadece öğrendiğim Go kavramlarını uygulamak ve geliştirmekti.
 - Status bilgileri için `const` sabitleri (`StatusPending`, `StatusActive`, vs.)
 - JSON tag’leri yorum satırı olarak eklendi (ileride API’ye dönüşebilir)
 
-## Proje Yapısı  
+## Proje Yapısı
 
 cmd/
 
