@@ -62,7 +62,6 @@ func (s *UserManager) UpdateUser(id, newUsername, newEmail, newPasswordHash, new
 		AvatarURL: newAvatarURL,
 	}
 	user.UpdatedAt = time.Now()
-	models.Users[id] = user
 
 	return nil
 }
