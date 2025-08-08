@@ -2,6 +2,8 @@ package main
 
 import (
 	"devflow/internal/handlers"
+	"devflow/internal/models"
+	"devflow/tools/generics"
 	"flag"
 	"fmt"
 	"os"
@@ -9,7 +11,8 @@ import (
 )
 
 func main() {
-	section := flag.String("section", "", "users, projects, tasks")
+
+	section := flag.String("section", "", "users, projects, tasks, generics")
 	action := flag.String("action", "", "create, list")
 
 	username := flag.String("username", "", "")
@@ -36,6 +39,8 @@ func main() {
 		handleUserSection(*action, *username, *email, *password, *role, *firstName, *lastName, *avatar)
 	case "projects":
 		handleProjectSection(*action, *projectID, *projectName, *projectDesc, *projectOwner, *projectStatus, *projectPrivate, *projectMembers, *projectWorkflow)
+	case "generics":
+		runGenericsTest()
 	default:
 		fmt.Println("gecerli bir section girilmeli")
 	}
@@ -82,4 +87,17 @@ func splitCSV(input string) []string {
 		parts[i] = strings.TrimSpace(parts[i])
 	}
 	return parts
+}
+
+func runGenericsTest() {
+	users := []*models.User{
+		{ID: "u1", Username: "kursat"},
+		{ID: "u2", Username: "burak"},
+	}
+	found := generics.FindByID(users, "u2")
+	if found != nil {
+		fmt.Println("bulundu:", found.Username)
+	} else {
+		fmt.Println("bulunamadı")
+	}
 }
