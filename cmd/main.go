@@ -49,10 +49,6 @@ func main() {
 func handleUserSection(action, username, email, password, role, firstName, lastName, avatar string) {
 	switch action {
 	case "create":
-		if username == "" || email == "" || password == "" || firstName == "" || lastName == "" {
-			fmt.Println("eksik bilgi")
-			os.Exit(1)
-		}
 		handlers.CreateUser(username, username, email, password, role, firstName, lastName, avatar)
 	case "list":
 		handlers.ListUsers()

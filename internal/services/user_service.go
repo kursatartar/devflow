@@ -17,11 +17,18 @@ func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstN
 	if _, exists := models.Users[id]; exists {
 		return ErrUserAlreadyExists
 	}
-	// handler'da fonksiyonun aldığı değerler kısmını model'den çekmek yerine
+	
 	profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
-	user := models.NewUser(id, username, email, passwordHash, role, profile)
+	user, err := models.NewUser(id, username, email, passwordHash, role, profile)
+	if err != nil {
+		return fmt.Errorf("kullanıcı oluşturulamadı: %w", err)
+	}
 
-	if !user.IsEmailValid() {
+	isValid, err := user.IsEmailValid()
+	if err != nil {
+		return fmt.Errorf("email validasyon hatası: %w", err)
+	}
+	if !isValid {
 		return ErrInvalidEmail
 	}
 
