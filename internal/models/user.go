@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"strings"
 	"time"
 )
@@ -24,7 +25,23 @@ type User struct {
 
 var Users = map[string]*User{}
 
-func NewUser(id, username, email, passwordHash, role string, profile Profile) *User {
+func NewUser(id, username, email, passwordHash, role string, profile Profile) (*User, error) {
+	if id == "" {
+		return nil, errors.New("kullanıcı ID'si boş olamaz")
+	}
+	if username == "" {
+		return nil, errors.New("kullanıcı adı boş olamaz")
+	}
+	if email == "" {
+		return nil, errors.New("email adresi boş olamaz")
+	}
+	if passwordHash == "" {
+		return nil, errors.New("şifre hash'i boş olamaz")
+	}
+	if role == "" {
+		return nil, errors.New("kullanıcı rolü boş olamaz")
+	}
+
 	return &User{
 		ID:           id,
 		Username:     username,
@@ -34,12 +51,14 @@ func NewUser(id, username, email, passwordHash, role string, profile Profile) *U
 		Profile:      profile,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-	}
-
+	}, nil
 }
 
-func (u *User) IsEmailValid() bool {
-	return strings.Contains(u.Email, "@")
+func (u *User) IsEmailValid() (bool, error) {
+	if u.Email == "" {
+		return false, errors.New("email adresi boş olamaz")
+	}
+	return strings.Contains(u.Email, "@"), nil
 }
 
 func (u *User) GetID() string {

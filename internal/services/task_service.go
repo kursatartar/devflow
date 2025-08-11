@@ -10,8 +10,6 @@ import (
 type TaskManager struct{}
 
 func (t TaskManager) CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) error {
-	//TODO implement me
-
 	if _, exists := models.Tasks[id]; exists {
 		return ErrTaskExists
 	}
@@ -28,7 +26,6 @@ func (t TaskManager) CreateTask(id, title, description, projectID, assignedTo, c
 }
 
 func (t TaskManager) UpdateTask(id, newTitle, newDescription, newStatus, newPriority, newDueDate string, newLabels []string, newEstimated, newLogged float64) {
-	//TODO implement me
 	if task, exists := models.Tasks[id]; exists {
 		task.Title = newTitle
 		task.Description = newDescription
@@ -42,32 +39,27 @@ func (t TaskManager) UpdateTask(id, newTitle, newDescription, newStatus, newPrio
 }
 
 func (t TaskManager) DeleteTask(id string) {
-	//TODO implement me
 	if task, exists := models.Tasks[id]; exists {
 		delete(models.Tasks, id)
 		fmt.Println("task deleted:", task)
 	}
-	panic("implement me")
 }
 
 func (t TaskManager) ListTasks() {
-	//TODO implement me
 	fmt.Println("task list")
 	for _, task := range models.Tasks {
 		fmt.Println(task)
 	}
-	panic("implement me")
 }
 
 func (t TaskManager) FilterTasksByProject(projectID string) []*models.Task {
-	//TODO implement me
 	var tasks []*models.Task
 	for _, task := range models.Tasks {
 		if task.ProjectID == projectID {
 			tasks = append(tasks, task)
 		}
 	}
-	panic("implement me")
+	return tasks
 }
 
 func NewTaskService() interfaces.TaskService {
