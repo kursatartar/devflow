@@ -41,3 +41,7 @@ func NewUser(id, username, email, passwordHash, role string, profile Profile) *U
 func (u *User) IsEmailValid() bool {
 	return strings.Contains(u.Email, "@")
 }
+
+func (u *User) GetID() string {
+	return u.ID
+}

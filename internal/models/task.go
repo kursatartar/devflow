@@ -45,3 +45,7 @@ func NewTask(id, title, description, projectID, assignedTo, createdBy, status, p
 		UpdatedAt: time.Now(),
 	}
 }
+
+func (u *Task) GetID() string {
+	return u.ID
+}

@@ -37,3 +37,7 @@ func NewProject(id, name, description, ownerID string, teamMembers []string, sta
 		UpdatedAt: time.Now(),
 	}
 }
+
+func (u *Project) GetID() string {
+	return u.ID
+}
