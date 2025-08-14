@@ -37,14 +37,34 @@
 					"name": "Create user",
 					"request": {
 						"method": "POST",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"kürşat artar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password_hash\": \"hash\",\n  \"role\": \"admin\",\n  \"first_name\": \"kürşat\",\n  \"last_name\": \"artar\",\n  \"avatar_url\": \"https://example.com/avatar.png\"\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Delete user",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": []
 					},
 					"response": []
