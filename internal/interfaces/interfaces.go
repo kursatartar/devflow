@@ -25,3 +25,14 @@ type TaskService interface {
 	ListTasks()
 	FilterTasksByProject(projectID string) []*models.Task
 }
+
+type TeamService interface {
+	CreateTeam(id, name, description, ownerID string, members []models.TeamMember, settings models.TeamSettings) error
+	UpdateTeam(id, newName, newDescription string, newSettings models.TeamSettings)
+	AddMember(teamID, userID, role string)
+	RemoveMember(teamID, userID string)
+	ChangeMemberRole(teamID, userID, newRole string)
+	ListTeams()
+	FilterTeamsByOwner(ownerID string) []*models.Team
+	DeleteTeam(id string)
+}
