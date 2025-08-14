@@ -13,7 +13,18 @@ const (
 
 var taskService = services.NewTaskService()
 
-func CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) {
+func CreateTask(id,
+	title,
+	description,
+	projectID,
+	assignedTo,
+	createdBy,
+	status,
+	priority,
+	dueDate string,
+	labels []string,
+	estimated,
+	logged float64) {
 	err := taskService.CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate, labels, estimated, logged)
 	if err != nil {
 		fmt.Println(err.Error())

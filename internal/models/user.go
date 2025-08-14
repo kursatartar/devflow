@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"strings"
 	"time"
 )
@@ -27,7 +28,7 @@ var Users = map[string]*User{}
 
 func NewUser(id, username, email, passwordHash, role string, profile Profile) (*User, error) {
 	if id == "" {
-		return nil, errors.New("kullanıcı ID'si boş olamaz")
+		id = uuid.NewString()
 	}
 	if username == "" {
 		return nil, errors.New("kullanıcı adı boş olamaz")
