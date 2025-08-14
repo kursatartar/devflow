@@ -1,6 +1,7 @@
 package main
 
 import (
+	"devflow/internal/handlers"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -34,6 +35,7 @@ func main() {
 	auth.Post("/logout", ListResp)
 
 	users := api.Group("/users")
+	users.Post("/", handlers.CreateUser)
 	users.Get("/", ListResp)
 	users.Get("/:id", ItemResp)
 	users.Put("/:id", ItemResp)
