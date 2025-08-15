@@ -13,32 +13,29 @@ func NewUserService() interfaces.UserService {
 	return &UserManager{}
 }
 
-func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) error {
+func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) (*models.User, error) {
 	for _, u := range models.Users {
 		if u.Email == email {
-			return ErrEmailExists
+			return nil, ErrEmailExists
 		}
-	}
-	if _, exists := models.Users[id]; exists {
-		return ErrUserAlreadyExists
 	}
 
 	profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
 	user, err := models.NewUser(id, username, email, passwordHash, role, profile)
 	if err != nil {
-		return fmt.Errorf("kullanıcı oluşturulamadı: %w", err)
+		return nil, fmt.Errorf("kullanıcı oluşturulamadı: %w", err)
 	}
 
-	isValid, err := user.IsEmailValid()
+	ok, err := user.IsEmailValid()
 	if err != nil {
-		return fmt.Errorf("email validasyon hatası: %w", err)
+		return nil, fmt.Errorf("email validasyon hatası: %w", err)
 	}
-	if !isValid {
-		return ErrInvalidEmail
+	if !ok {
+		return nil, ErrInvalidEmail
 	}
 
-	models.Users[id] = user
-	return nil
+	models.Users[user.ID] = user
+	return user, nil
 }
 
 func (s *UserManager) ListUsers() []*models.User {
