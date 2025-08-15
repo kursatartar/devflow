@@ -4,9 +4,9 @@ import "devflow/internal/models"
 
 type UserService interface {
 	CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) error
-	ListUsers()
+	ListUsers() []*models.User
 	UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole, newFirstName, newLastName, newAvatarURL string) error
-	DeleteUser(id string)
+	DeleteUser(id string) error
 	FilterUsersByRole(role string) []*models.User
 }
 

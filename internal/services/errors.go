@@ -6,6 +6,7 @@ var (
 	ErrUserNotFound      = errors.New("user not found")
 	ErrInvalidEmail      = errors.New("invalid email format")
 	ErrUserAlreadyExists = errors.New("user already exists")
+	ErrEmailExists       = errors.New("email already exists")
 
 	ErrProjectNotFound = errors.New("project not found")
 	ErrProjectExists   = errors.New("project already exists")

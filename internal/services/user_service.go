@@ -14,10 +14,15 @@ func NewUserService() interfaces.UserService {
 }
 
 func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) error {
+	for _, u := range models.Users {
+		if u.Email == email {
+			return ErrEmailExists
+		}
+	}
 	if _, exists := models.Users[id]; exists {
 		return ErrUserAlreadyExists
 	}
-	
+
 	profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
 	user, err := models.NewUser(id, username, email, passwordHash, role, profile)
 	if err != nil {
@@ -36,11 +41,12 @@ func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstN
 	return nil
 }
 
-func (s *UserManager) ListUsers() {
-	fmt.Println("all users:")
-	for _, user := range models.Users {
-		fmt.Println(user)
+func (s *UserManager) ListUsers() []*models.User {
+	out := make([]*models.User, 0, len(models.Users))
+	for _, u := range models.Users {
+		out = append(out, u)
 	}
+	return out
 }
 
 func (s *UserManager) FilterUsersByRole(role string) []*models.User {
@@ -59,6 +65,22 @@ func (s *UserManager) UpdateUser(id, newUsername, newEmail, newPasswordHash, new
 		return ErrUserNotFound
 	}
 
+	for _, u := range models.Users {
+		if u.Email == newEmail && u.ID != id {
+			return ErrEmailExists
+		}
+	}
+
+	tempUser := *user
+	tempUser.Email = newEmail
+	isValid, err := tempUser.IsEmailValid()
+	if err != nil {
+		return err
+	}
+	if !isValid {
+		return ErrInvalidEmail
+	}
+
 	user.Username = newUsername
 	user.Email = newEmail
 	user.PasswordHash = newPasswordHash
@@ -73,11 +95,10 @@ func (s *UserManager) UpdateUser(id, newUsername, newEmail, newPasswordHash, new
 	return nil
 }
 
-func (s *UserManager) DeleteUser(id string) {
+func (s *UserManager) DeleteUser(id string) error {
 	if _, exists := models.Users[id]; exists {
 		delete(models.Users, id)
-		fmt.Println("user deleted:", id)
-	} else {
-		fmt.Println("user not found")
+		return nil
 	}
+	return ErrUserNotFound
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"devflow/internal/handlers"
+	"devflow/internal/services"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +23,27 @@ func ItemResp(c *fiber.Ctx) error {
 }
 
 func main() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			switch err {
+			case services.ErrEmailExists:
+				return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+					"success": false,
+					"message": err.Error(),
+				})
+			case services.ErrInvalidEmail:
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"success": false,
+					"message": err.Error(),
+				})
+			default:
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"success": false,
+					"message": err.Error(),
+				})
+			}
+		},
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error { return c.SendString("ok") })
 
@@ -36,10 +57,10 @@ func main() {
 
 	users := api.Group("/users")
 	users.Post("/", handlers.CreateUser)
-	users.Get("/", ListResp)
+	users.Get("/", handlers.ListUsers)
 	users.Get("/:id", ItemResp)
-	users.Put("/:id", ItemResp)
-	users.Delete("/:id", ItemResp)
+	users.Put("/:id", handlers.UpdateUser)
+	users.Delete("/:id", handlers.DeleteUser)
 
 	projects := api.Group("/projects")
 	projects.Get("/", ListResp)
