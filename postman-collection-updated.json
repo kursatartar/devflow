@@ -19,9 +19,28 @@
 				},
 				{
 					"name": "Get user details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"kuwdrsat\",\n  \"email\": \"dwnqwwwdwqs@example.com\",\n  \"password_hash\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\"\n}\n"
+						},
+						"url": {
+							"raw": "localhost:8080/api/users/3d74588f-ac36-4771-86fb-060ffbc9aa4e",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"3d74588f-ac36-4771-86fb-060ffbc9aa4e"
+							]
+						}
 					},
 					"response": []
 				},
@@ -40,7 +59,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"kürşat artar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password_hash\": \"hash\",\n  \"role\": \"admin\",\n  \"first_name\": \"kürşat\",\n  \"last_name\": \"artar\",\n  \"avatar_url\": \"https://example.com/avatar.png\"\n}\n\n",
+							"raw": "{\n  \"username\": \"kuwdrsat\",\n  \"email\": \"dwnqwwwdwqs@example.com\",\n  \"password_hash\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"

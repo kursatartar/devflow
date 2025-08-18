@@ -1,47 +1,188 @@
 package handlers
 
 import (
-	"devflow/internal/services"
-	"fmt"
-)
+	"errors"
 
-const (
-	StatusPending = "pending"
-	StatusActive  = "active"
-	StatusDone    = "done"
+	"devflow/internal/services"
+	"github.com/gofiber/fiber/v2"
 )
 
 var taskService = services.NewTaskService()
 
-func CreateTask(id,
-	title,
-	description,
-	projectID,
-	assignedTo,
-	createdBy,
-	status,
-	priority,
-	dueDate string,
-	labels []string,
-	estimated,
-	logged float64) {
-	err := taskService.CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate, labels, estimated, logged)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
+type createTaskReq struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	ProjectID   string   `json:"project_id"`
+	AssignedTo  string   `json:"assigned_to"`
+	CreatedBy   string   `json:"created_by"`
+	Status      string   `json:"status"`
+	Priority    string   `json:"priority"`
+	Labels      []string `json:"labels"`
+	DueDate     string   `json:"due_date"`
+	Estimated   float64  `json:"estimated_hours"`
+	Logged      float64  `json:"logged_hours"`
+}
+
+type updateTaskReq struct {
+	Title       *string   `json:"title"`
+	Description *string   `json:"description"`
+	Status      *string   `json:"status"`
+	Priority    *string   `json:"priority"`
+	Labels      *[]string `json:"labels"`
+	DueDate     *string   `json:"due_date"`
+	Estimated   *float64  `json:"estimated_hours"`
+	Logged      *float64  `json:"logged_hours"`
+}
+
+func taskResource(t interface {
+	GetID() string
+}) fiber.Map {
+	return fiber.Map{}
+}
+
+func mapTask(t interface {
+	GetID() string
+}) fiber.Map {
+	type tt interface {
+		GetID() string
 	}
-	fmt.Println("task created")
-
+	_ = tt(t)
+	return fiber.Map{}
 }
 
-func ListTasks() {
-	taskService.ListTasks()
+func CreateTask(c *fiber.Ctx) error {
+	var body createTaskReq
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
+	}
+	if body.Title == "" || body.ProjectID == "" || body.CreatedBy == "" || body.Status == "" || body.Priority == "" || body.DueDate == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "missing required fields"})
+	}
+
+	t, err := taskService.CreateTask("", body.Title, body.Description, body.ProjectID, body.AssignedTo, body.CreatedBy, body.Status, body.Priority, body.DueDate, body.Labels, body.Estimated, body.Logged)
+	if err != nil {
+		code := fiber.StatusInternalServerError
+		switch {
+		case errors.Is(err, services.ErrTaskExists):
+			code = fiber.StatusConflict
+		case errors.Is(err, services.ErrInvalidDueDate):
+			code = fiber.StatusBadRequest
+		}
+		return c.Status(code).JSON(fiber.Map{"success": false, "message": err.Error()})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"message": "Task created successfully",
+		"data": fiber.Map{
+			"id":          t.ID,
+			"title":       t.Title,
+			"description": t.Description,
+			"projectId":   t.ProjectID,
+			"assignedTo":  t.AssignedTo,
+			"createdBy":   t.CreatedBy,
+			"status":      t.Status,
+			"priority":    t.Priority,
+			"labels":      t.Labels,
+			"dueDate":     t.DueDate,
+			"timeTracking": fiber.Map{
+				"estimated_hours": t.TimeTracking.EstimatedHours,
+				"logged_hours":    t.TimeTracking.LoggedHours,
+			},
+			"createdAt": t.CreatedAt,
+			"updatedAt": t.UpdatedAt,
+		},
+	})
 }
 
-func UpdateTask(id, newTitle, newDescription, newStatus, newPriority, newDueDate string, newLabels []string, newEstimated, newLogged float64) {
-	taskService.UpdateTask(id, newTitle, newDescription, newStatus, newPriority, newDueDate, newLabels, newEstimated, newLogged)
+func ListTasks(c *fiber.Ctx) error {
+	ts := taskService.ListTasks()
+	list := make([]fiber.Map, 0, len(ts))
+	for _, t := range ts {
+		list = append(list, fiber.Map{
+			"id":          t.ID,
+			"title":       t.Title,
+			"description": t.Description,
+			"projectId":   t.ProjectID,
+			"assignedTo":  t.AssignedTo,
+			"createdBy":   t.CreatedBy,
+			"status":      t.Status,
+			"priority":    t.Priority,
+			"labels":      t.Labels,
+			"dueDate":     t.DueDate,
+			"timeTracking": fiber.Map{
+				"estimated_hours": t.TimeTracking.EstimatedHours,
+				"logged_hours":    t.TimeTracking.LoggedHours,
+			},
+			"createdAt": t.CreatedAt,
+			"updatedAt": t.UpdatedAt,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Tasks fetched successfully",
+		"data":    list,
+	})
 }
 
-func DeleteTask(id string) {
-	taskService.DeleteTask(id)
+func UpdateTask(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var body updateTaskReq
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
+	}
+	if len(c.Body()) == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "request body required"})
+	}
+
+	t, err := taskService.UpdateTask(id, body.Title, body.Description, body.Status, body.Priority, body.DueDate, body.Labels, body.Estimated, body.Logged)
+	if err != nil {
+		code := fiber.StatusInternalServerError
+		switch {
+		case errors.Is(err, services.ErrTaskNotFound):
+			code = fiber.StatusNotFound
+		case errors.Is(err, services.ErrInvalidDueDate):
+			code = fiber.StatusBadRequest
+		}
+		return c.Status(code).JSON(fiber.Map{"success": false, "message": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Task updated successfully",
+		"data": fiber.Map{
+			"id":          t.ID,
+			"title":       t.Title,
+			"description": t.Description,
+			"projectId":   t.ProjectID,
+			"assignedTo":  t.AssignedTo,
+			"createdBy":   t.CreatedBy,
+			"status":      t.Status,
+			"priority":    t.Priority,
+			"labels":      t.Labels,
+			"dueDate":     t.DueDate,
+			"timeTracking": fiber.Map{
+				"estimated_hours": t.TimeTracking.EstimatedHours,
+				"logged_hours":    t.TimeTracking.LoggedHours,
+			},
+			"createdAt": t.CreatedAt,
+			"updatedAt": t.UpdatedAt,
+		},
+	})
+}
+
+func DeleteTask(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := taskService.DeleteTask(id); err != nil {
+		code := fiber.StatusInternalServerError
+		if errors.Is(err, services.ErrTaskNotFound) {
+			code = fiber.StatusNotFound
+		}
+		return c.Status(code).JSON(fiber.Map{"success": false, "message": err.Error()})
+	}
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Task deleted successfully",
+	})
 }

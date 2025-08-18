@@ -50,10 +50,18 @@ func main() {
 	api := app.Group("/api")
 
 	auth := api.Group("/auth")
-	auth.Post("/register", ListResp)
-	auth.Post("/login", ListResp)
-	auth.Post("/refresh", ListResp)
-	auth.Post("/logout", ListResp)
+	auth.Post("/register", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
+	})
+	auth.Post("/login", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
+	})
+	auth.Post("/refresh", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
+	})
+	auth.Post("/logout", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
+	})
 
 	users := api.Group("/users")
 	users.Post("/", handlers.CreateUser)
@@ -63,26 +71,26 @@ func main() {
 	users.Delete("/:id", handlers.DeleteUser)
 
 	projects := api.Group("/projects")
-	projects.Get("/", ListResp)
-	projects.Post("/", ListResp)
-	projects.Get("/:id", ItemResp)
-	projects.Put("/:id", ItemResp)
-	projects.Delete("/:id", ItemResp)
+	projects.Get("/", handlers.ListProjects)
+	projects.Post("/", handlers.CreateProject)
+	projects.Get("/:id", handlers.ListProjects)
+	projects.Put("/:id", handlers.UpdateProject)
+	projects.Delete("/:id", handlers.DeleteProject)
 
-	projects.Get("/:id/tasks", ListResp)
-	projects.Post("/:id/tasks", ListResp)
+	projects.Get("/:id/tasks", handlers.ListTasks)
+	projects.Post("/:id/tasks", handlers.CreateTask)
 
 	tasks := api.Group("/tasks")
-	tasks.Get("/:id", ItemResp)
-	tasks.Put("/:id", ItemResp)
-	tasks.Delete("/:id", ItemResp)
+	tasks.Get("/:id", handlers.ListTasks)
+	tasks.Put("/:id", handlers.UpdateTask)
+	tasks.Delete("/:id", handlers.DeleteTask)
 
 	teams := api.Group("/teams")
-	teams.Get("/", ListResp)
-	teams.Post("/", ListResp)
-	teams.Get("/:id", ItemResp)
-	teams.Put("/:id", ItemResp)
-	teams.Post("/:id/members", ListResp)
+	teams.Get("/", handlers.ListTeams)
+	teams.Post("/", handlers.CreateTeam)
+	teams.Get("/:id", handlers.ListTeams)
+	teams.Put("/:id", handlers.UpdateTeam)
+	teams.Post("/:id/members", handlers.CreateUser)
 
 	log.Fatal(app.Listen(":8080"))
 }
