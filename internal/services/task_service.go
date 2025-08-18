@@ -90,3 +90,11 @@ func (t TaskManager) FilterTasksByProject(projectID string) []*models.Task {
 	}
 	return tasks
 }
+
+func (t TaskManager) GetTask(id string) (*models.Task, error) {
+	task, ok := models.Tasks[id]
+	if !ok {
+		return nil, ErrTaskNotFound
+	}
+	return task, nil
+}

@@ -99,3 +99,11 @@ func (s *UserManager) DeleteUser(id string) error {
 	}
 	return ErrUserNotFound
 }
+
+func (s *UserManager) GetUser(id string) (*models.User, error) {
+	u, ok := models.Users[id]
+	if !ok {
+		return nil, ErrUserNotFound
+	}
+	return u, nil
+}

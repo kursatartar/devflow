@@ -186,3 +186,39 @@ func DeleteTask(c *fiber.Ctx) error {
 		"message": "Task deleted successfully",
 	})
 }
+
+func GetTask(c *fiber.Ctx) error {
+	id := c.Params("id")
+	t, err := taskService.GetTask(id)
+	if err != nil {
+		status := fiber.StatusInternalServerError
+		if errors.Is(err, services.ErrTaskNotFound) {
+			status = fiber.StatusNotFound
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Task fetched successfully",
+		"data": fiber.Map{
+			"ID":          t.ID,
+			"Title":       t.Title,
+			"Description": t.Description,
+			"ProjectId":   t.ProjectID,
+			"AssignedTo":  t.AssignedTo,
+			"CreatedBy":   t.CreatedBy,
+			"Status":      t.Status,
+			"Priority":    t.Priority,
+			"Labels":      t.Labels,
+			"DueDate":     t.DueDate,
+			"timeTracking": fiber.Map{
+				"estimated_hours": t.TimeTracking.EstimatedHours,
+				"logged_hours":    t.TimeTracking.LoggedHours,
+			},
+		},
+	})
+}

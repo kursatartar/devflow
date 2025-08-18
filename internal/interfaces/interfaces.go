@@ -8,6 +8,7 @@ type UserService interface {
 	UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole, newFirstName, newLastName, newAvatarURL string) error
 	DeleteUser(id string) error
 	FilterUsersByRole(role string) []*models.User
+	GetUser(id string) (*models.User, error)
 }
 
 type ProjectService interface {
@@ -16,6 +17,7 @@ type ProjectService interface {
 	DeleteProject(id string) error
 	ListProjects() []*models.Project
 	FilterProjectsByOwner(ownerID string) []*models.Project
+	GetProject(id string) (*models.Project, error)
 }
 
 type TaskService interface {
@@ -24,6 +26,7 @@ type TaskService interface {
 	DeleteTask(id string) error
 	ListTasks() []*models.Task
 	FilterTasksByProject(projectID string) []*models.Task
+	GetTask(id string) (*models.Task, error)
 }
 
 type TeamService interface {

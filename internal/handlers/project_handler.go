@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"devflow/internal/services"
+	"errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -73,4 +74,31 @@ func DeleteProject(c *fiber.Ctx) error {
 		return c.Status(status).JSON(fiber.Map{"success": false, "message": err.Error()})
 	}
 	return c.JSON(fiber.Map{"success": true, "message": "Project deleted successfully"})
+}
+
+func GetProject(c *fiber.Ctx) error {
+	id := c.Params("id")
+	p, err := projectService.GetProject(id)
+	if err != nil {
+		status := fiber.StatusInternalServerError
+		if errors.Is(err, services.ErrProjectNotFound) {
+			status = fiber.StatusNotFound
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Project fetched successfully",
+		"data": fiber.Map{
+			"Id":          p.ID,
+			"Name":        p.Name,
+			"Description": p.Description,
+			"Status":      p.Status,
+			"TeamMembers": p.TeamMembers,
+		},
+	})
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"devflow/internal/models"
 	"errors"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -13,6 +14,9 @@ func NewProjectService() *ProjectManager {
 }
 
 func (s *ProjectManager) CreateProject(id, name, description, ownerID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+	if id == "" {
+		id = uuid.NewString()
+	}
 	if _, exists := models.Projects[id]; exists {
 		return nil, errors.New("project already exists")
 	}
@@ -60,4 +64,11 @@ func (s *ProjectManager) FilterProjectsByOwner(ownerID string) []*models.Project
 		}
 	}
 	return filtered
+}
+func (s *ProjectManager) GetProject(id string) (*models.Project, error) {
+	project, ok := models.Projects[id]
+	if !ok {
+		return nil, ErrProjectNotFound
+	}
+	return project, nil
 }

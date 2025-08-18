@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "f5138df7-3fc2-48f7-a54e-aa3cdd128c3a",
-		"name": "devflow",
+		"_postman_id": "228f547f-43ba-4aa9-82b3-a557d5601f43",
+		"name": "devflow Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19314147"
 	},
@@ -11,14 +11,6 @@
 			"item": [
 				{
 					"name": "List users",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "Get user details",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -27,10 +19,29 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"kuwdrsat\",\n  \"email\": \"dwnqwwwdwqs@example.com\",\n  \"password_hash\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\"\n}\n"
+							"raw": ""
 						},
 						"url": {
-							"raw": "localhost:8080/api/users/3d74588f-ac36-4771-86fb-060ffbc9aa4e",
+							"raw": "localhost:8080/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/users/:id",
 							"host": [
 								"localhost"
 							],
@@ -38,7 +49,13 @@
 							"path": [
 								"api",
 								"users",
-								"3d74588f-ac36-4771-86fb-060ffbc9aa4e"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "52ffeeff-8b07-4654-ba7d-b630049f11d1"
+								}
 							]
 						}
 					},
@@ -47,8 +64,29 @@
 				{
 					"name": "Update user",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"52ffeeff-8b07-4654-ba7d-b630049f11d1\",\n    \"username\": \"Kürşat\",\n    \"last_name\": \"Artar-updated\",\n    \"email\": \"dwnqwwwdw22qs@example.com\",\n    \"password_hash\": \"hawdsh\",\n    \"first_name\": \"kurswdwat\",\n    \"avatar_url\": \"https://example.wdwdcom/a.png\",\n    \"role\" : \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/users/52ffeeff-8b07-4654-ba7d-b630049f11d1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"52ffeeff-8b07-4654-ba7d-b630049f11d1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -59,7 +97,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"kuwdrsat\",\n  \"email\": \"dwnqwwwdwqs@example.com\",\n  \"password_hash\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\"\n}\n",
+							"raw": "{\n  \"username\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password_hash\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\",\n  \"role\": \"admin\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -83,8 +121,479 @@
 				{
 					"name": "Delete user",
 					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/users/47b0c5a2-4cc4-42b1-ad46-8c6a1e6283f5",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"47b0c5a2-4cc4-42b1-ad46-8c6a1e6283f5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Teams",
+			"item": [
+				{
+					"name": "List teams",
+					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/teams",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"teams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get team details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/teams/28573e28-f479-44ed-9b88-3ac24932df4c",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"teams",
+								"28573e28-f479-44ed-9b88-3ac24932df4c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update team",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"product team\",\n  \"description\": \"devflow projesi için go fiber backend geliştirme\",\n  \"settings\": {\n    \"isPrivate\": true,\n    \"allowMemberInvite\": false\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/teams/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"teams",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "28573e28-f479-44ed-9b88-3ac24932df4c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create team",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"devflow backend team\",\n  \"description\": \"go fiber \",\n  \"owner_id\": \"user-123\",\n  \"members\": [\n    {\n      \"user_id\": \"user-456\",\n      \"role\": \"developer\"\n    },\n    {\n      \"user_id\": \"user-789\",\n      \"role\": \"tester\"\n    }\n  ],\n  \"settings\": {\n    \"isPrivate\": false,\n    \"allowMemberInvite\": true\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/teams",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"teams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete team",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/teams/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"teams",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "03fa9ea9-b458-4a5e-8ea5-50e611fa9b78"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add team member",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"user-321\",\n  \"role\": \"backend\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/teams/871974c4-c673-4e1c-bc29-4e47a4d2ed86/members",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"teams",
+								"871974c4-c673-4e1c-bc29-4e47a4d2ed86",
+								"members"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "List tasks",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get task details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "fc782d46-bc79-44e1-8f61-ece0e1783b8d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update tasks",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"devflow backend api v2\",\n  \"description\": \"product team için ek iş\",\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\",\n  \"labels\": [\"devflow\", \"product team\", \"backend\"],\n  \"due_date\": \"2025-09-15T12:00:00Z\",\n  \"estimated_hours\": 10,\n  \"logged_hours\": 3\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "fc782d46-bc79-44e1-8f61-ece0e1783b8d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"devflow backend api\",\n  \"description\": \"go fiber task1\",\n  \"project_id\": \"proj-1234\",\n  \"assigned_to\": \"user-456\",\n  \"created_by\": \"user-123\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"labels\": [\"devflow\", \"go\", \"fiber\", \"backend\"],\n  \"due_date\": \"2025-09-10T09:00:00Z\",\n  \"estimated_hours\": 8,\n  \"logged_hours\": 1.5\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete task",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1a50c2b8-c297-450f-8260-a7681c9094d9"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "List projects",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/projects",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get project details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/projects/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"projects",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4e8edbb2-7efa-4035-91d9-8efa6c59a249"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update projects",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"devflow backend v2\",\n  \"description\": \"product team için ek işler\",\n  \"status\": \"on_hold\",\n  \"team_members\": [\"user-123\", \"user-456\"],\n  \"is_private\": true,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"review\", \"done\"]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/projects/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"projects",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4e8edbb2-7efa-4035-91d9-8efa6c59a249"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"devflow backend\",\n  \"description\": \"go fiber proje\",\n  \"owner_id\": \"user-123\",\n  \"status\": \"active\",\n  \"team_members\": [\"user-123\", \"user-456\", \"user-789\"],\n  \"is_private\": false,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"done\"]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/projects",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete project",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/projects/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"projects",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4e8edbb2-7efa-4035-91d9-8efa6c59a249"
+								}
+							]
+						}
 					},
 					"response": []
 				}

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 
 	"devflow/internal/models"
 	"devflow/internal/services"
@@ -105,6 +106,9 @@ func GetTeam(c *fiber.Ctx) error {
 		code := fiber.StatusInternalServerError
 		if errors.Is(err, services.ErrTeamNotFound) {
 			code = fiber.StatusNotFound
+			return c.Status(code).JSON(fiber.Map{
+				"success": false,
+				"message": fmt.Sprintf("team %s not found", id)})
 		}
 		return c.Status(code).JSON(fiber.Map{"success": false, "message": err.Error()})
 	}
@@ -129,6 +133,7 @@ func UpdateTeam(c *fiber.Ctx) error {
 		code := fiber.StatusInternalServerError
 		if errors.Is(err, services.ErrTeamNotFound) {
 			code = fiber.StatusNotFound
+			return c.Status(code).JSON(fiber.Map{"success": false, "message": fmt.Sprintf("team %s not found", id)})
 		}
 		return c.Status(code).JSON(fiber.Map{"success": false, "message": err.Error()})
 	}
@@ -160,5 +165,24 @@ func AddTeamMember(c *fiber.Ctx) error {
 		"success": true,
 		"message": "Team member added successfully",
 		"data":    teamResource(t),
+	})
+}
+
+func DeleteTeam(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := teamService.DeleteTeam(id); err != nil {
+		code := fiber.StatusInternalServerError
+		if errors.Is(err, services.ErrTeamNotFound) {
+			code = fiber.StatusNotFound
+			return c.Status(code).JSON(fiber.Map{
+				"success": false,
+				"message": fmt.Sprintf("team %s not found", id),
+			})
+		}
+		return c.Status(code).JSON(fiber.Map{"success": false, "message": err.Error()})
+	}
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": fmt.Sprintf("team %s deleted successfully", id),
 	})
 }
