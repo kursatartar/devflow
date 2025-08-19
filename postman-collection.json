@@ -290,7 +290,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/teams/871974c4-c673-4e1c-bc29-4e47a4d2ed86/members",
+							"raw": "localhost:8080/api/teams/:id/members",
 							"host": [
 								"localhost"
 							],
