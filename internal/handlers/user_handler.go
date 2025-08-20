@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/requests"
 	"devflow/internal/services"
 	"errors"
 	"fmt"
@@ -9,18 +10,8 @@ import (
 
 var userService = services.NewUserService()
 
-type createUserReq struct {
-	Username     string `json:"username"`
-	Email        string `json:"email"`
-	PasswordHash string `json:"password_hash"`
-	Role         string `json:"role"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	AvatarURL    string `json:"avatar_url"`
-}
-
 func CreateUser(c *fiber.Ctx) error {
-	var body createUserReq
+	var body requests.CreateUserReq
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
 	}
@@ -105,16 +96,6 @@ func ListUsers(c *fiber.Ctx) error {
 	})
 }
 
-type updateUserReq struct {
-	Username     *string `json:"username"`
-	Email        *string `json:"email"`
-	PasswordHash *string `json:"password_hash"`
-	Role         *string `json:"role"`
-	FirstName    *string `json:"first_name"`
-	LastName     *string `json:"last_name"`
-	AvatarURL    *string `json:"avatar_url"`
-}
-
 func v(s *string) string {
 	if s == nil {
 		return ""
@@ -125,7 +106,7 @@ func v(s *string) string {
 func UpdateUser(u *fiber.Ctx) error {
 	id := u.Params("id")
 
-	var body updateUserReq
+	var body requests.UpdateUserReq
 	if err := u.BodyParser(&body); err != nil {
 		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,

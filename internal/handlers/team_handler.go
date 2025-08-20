@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/requests"
 	"errors"
 	"fmt"
 
@@ -10,30 +11,6 @@ import (
 )
 
 var teamService = services.NewTeamService()
-
-type createTeamReq struct {
-	Name        string                `json:"name"`
-	Description string                `json:"description"`
-	OwnerID     string                `json:"owner_id"`
-	Members     []createTeamMemberReq `json:"members"`
-	Settings    models.TeamSettings   `json:"settings"`
-}
-
-type createTeamMemberReq struct {
-	UserID string `json:"user_id"`
-	Role   string `json:"role"`
-}
-
-type updateTeamReq struct {
-	Name        *string              `json:"name"`
-	Description *string              `json:"description"`
-	Settings    *models.TeamSettings `json:"settings"`
-}
-
-type addMemberReq struct {
-	UserID string `json:"user_id"`
-	Role   string `json:"role"`
-}
 
 func teamResource(t *models.Team) fiber.Map {
 	ms := make([]fiber.Map, 0, len(t.Members))
@@ -60,7 +37,7 @@ func teamResource(t *models.Team) fiber.Map {
 }
 
 func CreateTeam(c *fiber.Ctx) error {
-	var body createTeamReq
+	var body requests.CreateTeamReq
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
 	}
@@ -121,7 +98,7 @@ func GetTeam(c *fiber.Ctx) error {
 
 func UpdateTeam(c *fiber.Ctx) error {
 	id := c.Params("id")
-	var body updateTeamReq
+	var body requests.UpdateTeamReq
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
 	}
@@ -146,7 +123,7 @@ func UpdateTeam(c *fiber.Ctx) error {
 
 func AddTeamMember(c *fiber.Ctx) error {
 	id := c.Params("id")
-	var body addMemberReq
+	var body requests.AddMemberReq
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
 	}

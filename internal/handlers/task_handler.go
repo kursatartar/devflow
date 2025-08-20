@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/requests"
 	"errors"
 
 	"devflow/internal/services"
@@ -8,31 +9,6 @@ import (
 )
 
 var taskService = services.NewTaskService()
-
-type createTaskReq struct {
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	ProjectID   string   `json:"project_id"`
-	AssignedTo  string   `json:"assigned_to"`
-	CreatedBy   string   `json:"created_by"`
-	Status      string   `json:"status"`
-	Priority    string   `json:"priority"`
-	Labels      []string `json:"labels"`
-	DueDate     string   `json:"due_date"`
-	Estimated   float64  `json:"estimated_hours"`
-	Logged      float64  `json:"logged_hours"`
-}
-
-type updateTaskReq struct {
-	Title       *string   `json:"title"`
-	Description *string   `json:"description"`
-	Status      *string   `json:"status"`
-	Priority    *string   `json:"priority"`
-	Labels      *[]string `json:"labels"`
-	DueDate     *string   `json:"due_date"`
-	Estimated   *float64  `json:"estimated_hours"`
-	Logged      *float64  `json:"logged_hours"`
-}
 
 func taskResource(t interface {
 	GetID() string
@@ -51,7 +27,7 @@ func mapTask(t interface {
 }
 
 func CreateTask(c *fiber.Ctx) error {
-	var body createTaskReq
+	var body requests.CreateTaskReq
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
 	}
@@ -128,7 +104,7 @@ func ListTasks(c *fiber.Ctx) error {
 func UpdateTask(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var body updateTaskReq
+	var body requests.UpdateTaskReq
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
 	}
