@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"devflow/internal/requests"
+	"devflow/internal/responses"
 	"devflow/internal/services"
 	"errors"
 	"fmt"
@@ -13,29 +14,29 @@ var userService = services.NewUserService()
 func CreateUser(c *fiber.Ctx) error {
 	var body requests.CreateUserReq
 	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "invalid json"})
+		return responses.ValidationError(c, "invalid json")
 	}
 
 	if body.Username == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "username boş olamaz"})
+		return responses.ValidationError(c, "username boş olamaz")
 	}
 	if body.Email == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "email boş olamaz"})
+		return responses.ValidationError(c, "email boş olamaz")
 	}
 	if body.PasswordHash == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "password_hash boş olamaz"})
+		return responses.ValidationError(c, "hash boş olamaz")
 	}
 	if body.Role == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "role boş olamaz"})
+		return responses.ValidationError(c, "role boş olamaz")
 	}
 	if body.FirstName == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "firstname boş olama"})
+		return responses.ValidationError(c, "firstname boş olamaz")
 	}
 	if body.LastName == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "lastname boş olamaz"})
+		return responses.ValidationError(c, "lastname boş olamaz")
 	}
 	if body.AvatarURL == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "avatarurl boş olamaz"})
+		return responses.ValidationError(c, "avatarurl boş olamaz")
 	}
 
 	u, err := userService.CreateUser(
@@ -49,51 +50,23 @@ func CreateUser(c *fiber.Ctx) error {
 		body.AvatarURL,
 	)
 	if err != nil {
-		status := fiber.StatusInternalServerError
 		switch {
 		case errors.Is(err, services.ErrEmailExists):
-			status = fiber.StatusConflict
+
+			return responses.Conflict(c, err.Error())
 		case errors.Is(err, services.ErrInvalidEmail):
-			status = fiber.StatusBadRequest
+			return responses.ValidationError(c, err.Error())
+		default:
+			return responses.Internal(c, err)
 		}
-		return c.Status(status).JSON(fiber.Map{"success": false, "message": err.Error()})
+
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"message": "User created successfully",
-		"data": fiber.Map{
-			"id":        u.ID,
-			"username":  u.Username,
-			"email":     u.Email,
-			"role":      u.Role,
-			"firstName": u.Profile.FirstName,
-			"lastName":  u.Profile.LastName,
-			"avatarURL": u.Profile.AvatarURL,
-		},
-	})
+	return responses.Created(c, "user created successfully", responses.UserResource(u))
 }
 func ListUsers(c *fiber.Ctx) error {
 	users := userService.ListUsers()
-
-	list := make([]fiber.Map, 0, len(users))
-	for _, u := range users {
-		list = append(list, fiber.Map{
-			"id":        u.ID,
-			"username":  u.Username,
-			"email":     u.Email,
-			"role":      u.Role,
-			"firstName": u.Profile.FirstName,
-			"lastName":  u.Profile.LastName,
-			"avatarURL": u.Profile.AvatarURL,
-		})
-	}
-
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Users fetched successfully",
-		"data":    list,
-	})
+	return responses.Success(c, "user fetched successfully", responses.UserList(users))
 }
 
 func v(s *string) string {
@@ -108,38 +81,32 @@ func UpdateUser(u *fiber.Ctx) error {
 
 	var body requests.UpdateUserReq
 	if err := u.BodyParser(&body); err != nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "invalid json",
-		})
+		return responses.ValidationError(u, "invalid json")
 	}
 	if len(u.Body()) == 0 {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "request body required",
-		})
+		return responses.ValidationError(u, "request body girilmeli")
 	}
 
 	if body.Username == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "username değeri girilmeli"})
+		return responses.ValidationError(u, "username değeri girilmeli")
 	}
 	if body.Email == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "email değeri girilmeli"})
+		return responses.ValidationError(u, "email değeri girilmeli")
 	}
 	if body.PasswordHash == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "password_hash değeri girilmeli"})
+		return responses.ValidationError(u, "hash değeri girilmeli")
 	}
 	if body.Role == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "role değeri girilmeli"})
+		return responses.ValidationError(u, "role değeri girilmeli")
 	}
 	if body.FirstName == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "firstname değeri girilmeli"})
+		return responses.ValidationError(u, "firstname değeri girilmeli")
 	}
 	if body.LastName == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "lastname değeri girilmeli"})
+		return responses.ValidationError(u, "lastname değeri girilmeli")
 	}
 	if body.AvatarURL == nil {
-		return u.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "avatarurl değeri girilmeli"})
+		return responses.ValidationError(u, "avatarurl değeri girilmeli")
 	}
 
 	if err := userService.UpdateUser(
@@ -152,92 +119,52 @@ func UpdateUser(u *fiber.Ctx) error {
 		v(body.LastName),
 		v(body.AvatarURL),
 	); err != nil {
-		status := fiber.StatusInternalServerError
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
-			status = fiber.StatusNotFound
-			return u.Status(status).JSON(fiber.Map{
-				"success": false,
-				"message": fmt.Sprintf("user %s not found", id),
-			})
+			return responses.NotFound(u, fmt.Sprintf("user %s not found", id))
 		case errors.Is(err, services.ErrInvalidEmail):
-			status = fiber.StatusBadRequest
+			return responses.ValidationError(u, err.Error())
 		case errors.Is(err, services.ErrEmailExists):
-			status = fiber.StatusConflict
-		}
-		return u.Status(status).JSON(fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
-	}
+			return responses.Conflict(u, err.Error())
+		default:
+			return responses.Internal(u, err)
 
-	return u.JSON(fiber.Map{
-		"success": true,
-		"message": "User updated successfully",
-		"data": fiber.Map{
-			"username":  v(body.Username),
-			"email":     v(body.Email),
-			"role":      v(body.Role),
-			"firstName": v(body.FirstName),
-			"lastName":  v(body.LastName),
-			"avatarURL": v(body.AvatarURL),
-		},
+		}
+
+	}
+	return responses.Success(u, "user updated succesfully", map[string]any{
+		"username":  v(body.Username),
+		"email":     v(body.Email),
+		"password":  v(body.PasswordHash),
+		"role":      v(body.Role),
+		"firstName": v(body.FirstName),
+		"lastName":  v(body.LastName),
+		"avatarUrl": v(body.AvatarURL),
 	})
+
 }
 
 func DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if err := userService.DeleteUser(id); err != nil {
-		status := fiber.StatusInternalServerError
+
 		if errors.Is(err, services.ErrUserNotFound) {
-			status = fiber.StatusNotFound
-			return c.Status(status).JSON(fiber.Map{
-				"success": false,
-				"message": fmt.Sprintf("user %s not found", id),
-			})
+			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
 		}
-		return c.Status(status).JSON(fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
+		return responses.Internal(c, err)
 	}
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "User deleted successfully",
-	})
+	return responses.Success(c, "user deleted successfully", nil)
 }
 
 func GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	u, err := userService.GetUser(id)
 	if err != nil {
-		status := fiber.StatusInternalServerError
 		if errors.Is(err, services.ErrUserNotFound) {
-			status = fiber.StatusNotFound
-			return c.Status(status).JSON(fiber.Map{
-				"success": false,
-				"message": fmt.Sprintf("user %s not found", id),
-			})
+			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
 		}
-		return c.Status(status).JSON(fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
+		return responses.Internal(c, err)
 	}
 
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "User fetched successfully",
-		"data": fiber.Map{
-			"id":        u.ID,
-			"username":  u.Username,
-			"email":     u.Email,
-			"role":      u.Role,
-			"firstName": u.Profile.FirstName,
-			"lastName":  u.Profile.LastName,
-			"avatarURL": u.Profile.AvatarURL,
-			"createdAt": u.CreatedAt,
-			"updatedAt": u.UpdatedAt,
-		},
-	})
+	return responses.Success(c, "user fetched successfully", responses.UserResource(u))
 }

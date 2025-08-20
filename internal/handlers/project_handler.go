@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"devflow/internal/requests"
+	"devflow/internal/responses"
+	"devflow/internal/services"
 	"errors"
 
-	"devflow/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,17 +14,11 @@ var projectService = services.NewProjectService()
 func CreateProject(c *fiber.Ctx) error {
 	var body requests.CreateProjectReq
 	if err := c.BodyParser(&body); err != nil {
-		return c.
-			Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"success": false, "message": "invalid json"})
+		return responses.ValidationError(c, "invalid json")
 	}
-
 	if body.Name == "" || body.OwnerID == "" || body.Status == "" {
-		return c.
-			Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"success": false, "message": "missing required fields"})
+		return responses.ValidationError(c, "missing required fields")
 	}
-
 	p, err := projectService.CreateProject(
 		"",
 		body.Name,
@@ -35,74 +30,25 @@ func CreateProject(c *fiber.Ctx) error {
 		body.TaskWorkflow,
 	)
 	if err != nil {
-
-		return c.
-			Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"success": false, "message": err.Error()})
+		return responses.ValidationError(c, err.Error())
 	}
-
-	return c.
-		Status(fiber.StatusCreated).
-		JSON(fiber.Map{
-			"success": true,
-			"message": "Project created successfully",
-			"data": fiber.Map{
-				"id":           p.ID,
-				"name":         p.Name,
-				"description":  p.Description,
-				"ownerId":      p.OwnerID,
-				"status":       p.Status,
-				"teamMembers":  p.TeamMembers,
-				"isPrivate":    p.Settings.IsPrivate,
-				"taskWorkflow": p.Settings.TaskWorkflow,
-				"createdAt":    p.CreatedAt,
-				"updatedAt":    p.UpdatedAt,
-			},
-		})
+	return responses.Created(c, "project created successfully", responses.ProjectResource(p))
 }
 
 func ListProjects(c *fiber.Ctx) error {
 	ps := projectService.ListProjects()
-
-	out := make([]fiber.Map, 0, len(ps))
-	for _, p := range ps {
-		out = append(out, fiber.Map{
-			"id":           p.ID,
-			"name":         p.Name,
-			"description":  p.Description,
-			"ownerId":      p.OwnerID,
-			"status":       p.Status,
-			"teamMembers":  p.TeamMembers,
-			"isPrivate":    p.Settings.IsPrivate,
-			"taskWorkflow": p.Settings.TaskWorkflow,
-			"createdAt":    p.CreatedAt,
-			"updatedAt":    p.UpdatedAt,
-		})
-	}
-
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Projects fetched successfully",
-		"data":    out,
-	})
+	return responses.Success(c, "projects fetched successfully", responses.ProjectList(ps))
 }
 
 func UpdateProject(c *fiber.Ctx) error {
 	id := c.Params("id")
-
 	if len(c.Body()) == 0 {
-		return c.
-			Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"success": false, "message": "request body required"})
+		return responses.ValidationError(c, "request body required")
 	}
-
 	var body requests.UpdateProjectReq
 	if err := c.BodyParser(&body); err != nil {
-		return c.
-			Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"success": false, "message": "invalid json"})
+		return responses.ValidationError(c, "invalid json")
 	}
-
 	p, err := projectService.UpdateProject(
 		id,
 		body.Name,
@@ -113,74 +59,33 @@ func UpdateProject(c *fiber.Ctx) error {
 		body.TaskWorkflow,
 	)
 	if err != nil {
-		status := fiber.StatusInternalServerError
 		if errors.Is(err, services.ErrProjectNotFound) {
-			status = fiber.StatusNotFound
+			return responses.NotFound(c, "project not found")
 		}
-		return c.Status(status).JSON(fiber.Map{"success": false, "message": err.Error()})
+		return responses.Internal(c, err)
 	}
-
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Project updated successfully",
-		"data": fiber.Map{
-			"id":           p.ID,
-			"name":         p.Name,
-			"description":  p.Description,
-			"ownerId":      p.OwnerID,
-			"status":       p.Status,
-			"teamMembers":  p.TeamMembers,
-			"isPrivate":    p.Settings.IsPrivate,
-			"taskWorkflow": p.Settings.TaskWorkflow,
-			"createdAt":    p.CreatedAt,
-			"updatedAt":    p.UpdatedAt,
-		},
-	})
+	return responses.Success(c, "project updated successfully", responses.ProjectResource(p))
 }
 
 func DeleteProject(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if err := projectService.DeleteProject(id); err != nil {
-		status := fiber.StatusInternalServerError
 		if errors.Is(err, services.ErrProjectNotFound) {
-			status = fiber.StatusNotFound
+			return responses.NotFound(c, "project not found")
 		}
-		return c.Status(status).JSON(fiber.Map{"success": false, "message": err.Error()})
+		return responses.Internal(c, err)
 	}
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Project deleted successfully",
-	})
+	return responses.Success(c, "project deleted successfully", nil)
 }
 
 func GetProject(c *fiber.Ctx) error {
 	id := c.Params("id")
 	p, err := projectService.GetProject(id)
 	if err != nil {
-		status := fiber.StatusInternalServerError
 		if errors.Is(err, services.ErrProjectNotFound) {
-			status = fiber.StatusNotFound
+			return responses.NotFound(c, "project not found")
 		}
-		return c.Status(status).JSON(fiber.Map{
-			"success": false,
-			"message": err.Error(),
-		})
+		return responses.Internal(c, err)
 	}
-
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Project fetched successfully",
-		"data": fiber.Map{
-			"id":           p.ID,
-			"name":         p.Name,
-			"description":  p.Description,
-			"ownerId":      p.OwnerID,
-			"status":       p.Status,
-			"teamMembers":  p.TeamMembers,
-			"isPrivate":    p.Settings.IsPrivate,
-			"taskWorkflow": p.Settings.TaskWorkflow,
-			"createdAt":    p.CreatedAt,
-			"updatedAt":    p.UpdatedAt,
-		},
-	})
+	return responses.Success(c, "project fetched successfully", responses.ProjectResource(p))
 }
