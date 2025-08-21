@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/converters"
 	"devflow/internal/requests"
 	"devflow/internal/responses"
 	"devflow/internal/services"
@@ -45,12 +46,12 @@ func CreateTask(c *fiber.Ctx) error {
 		}
 	}
 
-	return responses.Created(c, "task created successfully", responses.TaskResource(t))
+	return responses.Created(c, "task created successfully", converters.ToTaskResponse(t))
 }
 
 func ListTasks(c *fiber.Ctx) error {
 	ts := taskService.ListTasks()
-	return responses.Success(c, "tasks fetched successfully", responses.TaskList(ts))
+	return responses.Success(c, "tasks fetched successfully", converters.ToTaskListResponse(ts))
 }
 
 func UpdateTask(c *fiber.Ctx) error {
@@ -86,7 +87,7 @@ func UpdateTask(c *fiber.Ctx) error {
 		}
 	}
 
-	return responses.Success(c, "task updated successfully", responses.TaskResource(t))
+	return responses.Success(c, "task updated successfully", converters.ToTaskResponse(t))
 }
 
 func DeleteTask(c *fiber.Ctx) error {
@@ -110,5 +111,5 @@ func GetTask(c *fiber.Ctx) error {
 		return responses.Internal(c, err)
 	}
 
-	return responses.Success(c, "task fetched successfully", responses.TaskResource(t))
+	return responses.Success(c, "task fetched successfully", converters.ToTaskResponse(t))
 }

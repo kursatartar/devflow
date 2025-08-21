@@ -1,25 +1,22 @@
 package responses
 
-import "devflow/internal/models"
+import "time"
 
-func UserResource(u *models.User) map[string]any {
-	return map[string]any{
-		"id":        u.ID,
-		"username":  u.Username,
-		"email":     u.Email,
-		"role":      u.Role,
-		"firstName": u.Profile.FirstName,
-		"lastName":  u.Profile.LastName,
-		"avatarURL": u.Profile.AvatarURL,
-		"createdAt": u.CreatedAt,
-		"updatedAt": u.UpdatedAt,
-	}
+type UserResponse struct {
+	ID        string    `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	Role      string    `json:"role"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	AvatarURL string    `json:"avatar_url"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func UserList(users []*models.User) []map[string]any {
-	out := make([]map[string]any, 0, len(users))
-	for _, u := range users {
-		out = append(out, UserResource(u))
-	}
-	return out
+type UserListResponse struct {
+	Users    []UserResponse `json:"users"`
+	Metadata struct {
+		Total int64 `json:"total"`
+	} `json:"metadata"`
 }

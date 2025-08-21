@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/converters"
 	"devflow/internal/models"
 	"devflow/internal/requests"
 	"devflow/internal/responses"
@@ -32,12 +33,12 @@ func CreateTeam(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Created(c, "team created successfully", responses.TeamResource(t))
+	return responses.Created(c, "team created successfully", converters.ToTeamResponse(t))
 }
 
 func ListTeams(c *fiber.Ctx) error {
 	teams := teamService.ListTeams()
-	return responses.Success(c, "teams fetched successfully", responses.TeamList(teams))
+	return responses.Success(c, "teams fetched successfully", converters.ToTeamListResponse(teams))
 }
 
 func GetTeam(c *fiber.Ctx) error {
@@ -49,7 +50,7 @@ func GetTeam(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Success(c, "team fetched successfully", responses.TeamResource(t))
+	return responses.Success(c, "team fetched successfully", converters.ToTeamResponse(t))
 }
 
 func UpdateTeam(c *fiber.Ctx) error {
@@ -68,7 +69,7 @@ func UpdateTeam(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Success(c, "team updated successfully", responses.TeamResource(t))
+	return responses.Success(c, "team updated successfully", converters.ToTeamResponse(t))
 }
 
 func AddTeamMember(c *fiber.Ctx) error {
@@ -87,7 +88,7 @@ func AddTeamMember(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Success(c, "team member added successfully", responses.TeamResource(t))
+	return responses.Success(c, "team member added successfully", converters.ToTeamResponse(t))
 }
 
 func DeleteTeam(c *fiber.Ctx) error {

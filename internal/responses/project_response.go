@@ -1,26 +1,23 @@
 package responses
 
-import "devflow/internal/models"
+import "time"
 
-func ProjectResource(p *models.Project) map[string]any {
-	return map[string]any{
-		"id":           p.ID,
-		"name":         p.Name,
-		"description":  p.Description,
-		"ownerId":      p.OwnerID,
-		"status":       p.Status,
-		"teamMembers":  p.TeamMembers,
-		"isPrivate":    p.Settings.IsPrivate,
-		"taskWorkflow": p.Settings.TaskWorkflow,
-		"createdAt":    p.CreatedAt,
-		"updatedAt":    p.UpdatedAt,
-	}
+type ProjectResponse struct {
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description"`
+	OwnerID      string    `json:"owner_id"`
+	TeamMembers  []string  `json:"team_members"`
+	Status       string    `json:"status"`
+	IsPrivate    bool      `json:"is_private"`
+	TaskWorkflow []string  `json:"task_workflow"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
-func ProjectList(ps []*models.Project) []map[string]any {
-	out := make([]map[string]any, 0, len(ps))
-	for _, p := range ps {
-		out = append(out, ProjectResource(p))
-	}
-	return out
+type ProjectListResponse struct {
+	Projects []ProjectResponse `json:"projects"`
+	Metadata struct {
+		Total int64 `json:"total"`
+	} `json:"metadata"`
 }

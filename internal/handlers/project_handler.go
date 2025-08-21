@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/converters"
 	"devflow/internal/requests"
 	"devflow/internal/responses"
 	"devflow/internal/services"
@@ -32,12 +33,12 @@ func CreateProject(c *fiber.Ctx) error {
 	if err != nil {
 		return responses.ValidationError(c, err.Error())
 	}
-	return responses.Created(c, "project created successfully", responses.ProjectResource(p))
+	return responses.Created(c, "project created successfully", converters.ToProjectResponse(p))
 }
 
 func ListProjects(c *fiber.Ctx) error {
 	ps := projectService.ListProjects()
-	return responses.Success(c, "projects fetched successfully", responses.ProjectList(ps))
+	return responses.Success(c, "projects fetched successfully", converters.ToProjectListResponse(ps))
 }
 
 func UpdateProject(c *fiber.Ctx) error {
@@ -64,7 +65,7 @@ func UpdateProject(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Success(c, "project updated successfully", responses.ProjectResource(p))
+	return responses.Success(c, "project updated successfully", converters.ToProjectResponse(p))
 }
 
 func DeleteProject(c *fiber.Ctx) error {
@@ -87,5 +88,5 @@ func GetProject(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Success(c, "project fetched successfully", responses.ProjectResource(p))
+	return responses.Success(c, "project fetched successfully", converters.ToProjectResponse(p))
 }

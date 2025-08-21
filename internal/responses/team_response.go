@@ -1,35 +1,32 @@
 package responses
 
-import "devflow/internal/models"
+import "time"
 
-func TeamResource(t *models.Team) map[string]any {
-	ms := make([]map[string]any, 0, len(t.Members))
-	for _, m := range t.Members {
-		ms = append(ms, map[string]any{
-			"userId":   m.UserID,
-			"role":     m.Role,
-			"joinedAt": m.JoinedAt,
-		})
-	}
-	return map[string]any{
-		"id":          t.ID,
-		"name":        t.Name,
-		"description": t.Description,
-		"ownerId":     t.OwnerID,
-		"members":     ms,
-		"settings": map[string]any{
-			"isPrivate":         t.Settings.IsPrivate,
-			"allowMemberInvite": t.Settings.AllowMemberInvite,
-		},
-		"createdAt": t.CreatedAt,
-		"updatedAt": t.UpdatedAt,
-	}
+type TeamMemberResponse struct {
+	UserID   string    `json:"user_id"`
+	Role     string    `json:"role"`
+	JoinedAt time.Time `json:"joined_at"`
 }
 
-func TeamList(ts []*models.Team) []map[string]any {
-	out := make([]map[string]any, 0, len(ts))
-	for _, t := range ts {
-		out = append(out, TeamResource(t))
-	}
-	return out
+type TeamSettingsResponse struct {
+	IsPrivate         bool `json:"is_private"`
+	AllowMemberInvite bool `json:"allow_member_invite"`
+}
+
+type TeamResponse struct {
+	ID          string               `json:"id"`
+	Name        string               `json:"name"`
+	Description string               `json:"description"`
+	OwnerID     string               `json:"ownerId"`
+	Members     []TeamMemberResponse `json:"members"`
+	Settings    TeamSettingsResponse `json:"settings"`
+	CreatedAt   time.Time            `json:"created_at"`
+	UpdatedAt   time.Time            `json:"updated_at"`
+}
+
+type TeamListResponse struct {
+	Teams    []TeamResponse `json:"teams"`
+	Metadata struct {
+		Total int64 `json:"total"`
+	} `json:"metadata"`
 }

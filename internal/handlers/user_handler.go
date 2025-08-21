@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"devflow/internal/converters"
 	"devflow/internal/requests"
 	"devflow/internal/responses"
 	"devflow/internal/services"
@@ -62,11 +63,11 @@ func CreateUser(c *fiber.Ctx) error {
 
 	}
 
-	return responses.Created(c, "user created successfully", responses.UserResource(u))
+	return responses.Created(c, "user created successfully", converters.ToUserResponse(u))
 }
 func ListUsers(c *fiber.Ctx) error {
 	users := userService.ListUsers()
-	return responses.Success(c, "user fetched successfully", responses.UserList(users))
+	return responses.Success(c, "user fetched successfully", converters.ToUserListResponse(users))
 }
 
 func v(s *string) string {
@@ -76,37 +77,15 @@ func v(s *string) string {
 	return *s
 }
 
-func UpdateUser(u *fiber.Ctx) error {
-	id := u.Params("id")
+func UpdateUser(c *fiber.Ctx) error {
+	id := c.Params("id")
 
 	var body requests.UpdateUserReq
-	if err := u.BodyParser(&body); err != nil {
-		return responses.ValidationError(u, "invalid json")
+	if err := c.BodyParser(&body); err != nil {
+		return responses.ValidationError(c, "invalid json")
 	}
-	if len(u.Body()) == 0 {
-		return responses.ValidationError(u, "request body girilmeli")
-	}
-
-	if body.Username == nil {
-		return responses.ValidationError(u, "username değeri girilmeli")
-	}
-	if body.Email == nil {
-		return responses.ValidationError(u, "email değeri girilmeli")
-	}
-	if body.PasswordHash == nil {
-		return responses.ValidationError(u, "hash değeri girilmeli")
-	}
-	if body.Role == nil {
-		return responses.ValidationError(u, "role değeri girilmeli")
-	}
-	if body.FirstName == nil {
-		return responses.ValidationError(u, "firstname değeri girilmeli")
-	}
-	if body.LastName == nil {
-		return responses.ValidationError(u, "lastname değeri girilmeli")
-	}
-	if body.AvatarURL == nil {
-		return responses.ValidationError(u, "avatarurl değeri girilmeli")
+	if len(c.Body()) == 0 {
+		return responses.ValidationError(c, "request body required")
 	}
 
 	if err := userService.UpdateUser(
@@ -121,27 +100,25 @@ func UpdateUser(u *fiber.Ctx) error {
 	); err != nil {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
-			return responses.NotFound(u, fmt.Sprintf("user %s not found", id))
+			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
 		case errors.Is(err, services.ErrInvalidEmail):
-			return responses.ValidationError(u, err.Error())
+			return responses.ValidationError(c, err.Error())
 		case errors.Is(err, services.ErrEmailExists):
-			return responses.Conflict(u, err.Error())
+			return responses.Conflict(c, err.Error())
 		default:
-			return responses.Internal(u, err)
-
+			return responses.Internal(c, err)
 		}
-
 	}
-	return responses.Success(u, "user updated succesfully", map[string]any{
-		"username":  v(body.Username),
-		"email":     v(body.Email),
-		"password":  v(body.PasswordHash),
-		"role":      v(body.Role),
-		"firstName": v(body.FirstName),
-		"lastName":  v(body.LastName),
-		"avatarUrl": v(body.AvatarURL),
-	})
 
+	u, err := userService.GetUser(id)
+	if err != nil {
+		if errors.Is(err, services.ErrUserNotFound) {
+			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
+		}
+		return responses.Internal(c, err)
+	}
+
+	return responses.Success(c, "user updated successfully", converters.ToUserResponse(u))
 }
 
 func DeleteUser(c *fiber.Ctx) error {
@@ -166,5 +143,5 @@ func GetUser(c *fiber.Ctx) error {
 		return responses.Internal(c, err)
 	}
 
-	return responses.Success(c, "user fetched successfully", responses.UserResource(u))
+	return responses.Success(c, "user fetched successfully", converters.ToUserResponse(u))
 }

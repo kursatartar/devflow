@@ -1,32 +1,31 @@
 package responses
 
-import "devflow/internal/models"
+import "time"
 
-func TaskResource(t *models.Task) map[string]any {
-	return map[string]any{
-		"id":          t.ID,
-		"title":       t.Title,
-		"description": t.Description,
-		"projectId":   t.ProjectID,
-		"assignedTo":  t.AssignedTo,
-		"createdBy":   t.CreatedBy,
-		"status":      t.Status,
-		"priority":    t.Priority,
-		"labels":      t.Labels,
-		"dueDate":     t.DueDate,
-		"timeTracking": map[string]any{
-			"estimated_hours": t.TimeTracking.EstimatedHours,
-			"logged_hours":    t.TimeTracking.LoggedHours,
-		},
-		"createdAt": t.CreatedAt,
-		"updatedAt": t.UpdatedAt,
-	}
+type TaskTimeTrackingResponse struct {
+	EstimatedHours float64 `json:"estimated_hours"`
+	LoggedHours    float64 `json:"logged_hours"`
 }
 
-func TaskList(ts []*models.Task) []map[string]any {
-	out := make([]map[string]any, 0, len(ts))
-	for _, t := range ts {
-		out = append(out, TaskResource(t))
-	}
-	return out
+type TaskResponse struct {
+	ID           string                   `json:"id"`
+	Title        string                   `json:"title"`
+	Description  string                   `json:"description"`
+	ProjectID    string                   `json:"project_id"`
+	AssignedTo   string                   `json:"assigned_to"`
+	CreatedBy    string                   `json:"created_by"`
+	Status       string                   `json:"status"`
+	Priority     string                   `json:"priority"`
+	Labels       []string                 `json:"labels"`
+	DueDate      string                   `json:"due_date"`
+	TimeTracking TaskTimeTrackingResponse `json:"time_tracking"`
+	CreatedAt    time.Time                `json:"created_at"`
+	UpdatedAt    time.Time                `json:"updated_at"`
+}
+
+type TaskListResponse struct {
+	Tasks    []TaskResponse `json:"tasks"`
+	Metadata struct {
+		Total int64 `json:"total"`
+	} `json:"metadata"`
 }
