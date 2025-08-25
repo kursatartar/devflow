@@ -1,28 +1,31 @@
 package main
 
 import (
-	"devflow/internal/handlers"
-	"devflow/internal/services"
+	"context"
 	"log"
+	"time"
+
+	"devflow/internal/db"
+	"devflow/internal/handlers"
+	"devflow/internal/repositories"
+	"devflow/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func ListResp(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Rules fetched successfully",
-	})
-}
-
-func ItemResp(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{
-		"success": true,
-		"message": "Rule :id fetched successfully",
-	})
-}
-
 func main() {
+	mongo, err := db.NewMongo("mongodb://127.0.0.1:27017", "devflow", 20, 10*time.Second)
+	if err != nil {
+		log.Fatal("mongo connect error:", err)
+	}
+	defer mongo.Close(context.Background())
+
+	userRepo := repositories.NewMongoUserRepository(mongo.Database)
+
+	userSvc := services.NewUserServiceWithRepo(userRepo)
+
+	handlers.InitUserService(userSvc)
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			switch err {
