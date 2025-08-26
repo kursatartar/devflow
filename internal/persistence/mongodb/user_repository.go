@@ -1,25 +1,26 @@
-package repositories
+package mongodb
 
 import (
 	"context"
-	"devflow/internal/interfaces"
-	"devflow/internal/models"
 	"errors"
 	"time"
+
+	"devflow/internal/interfaces"
+	"devflow/internal/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type MongoUserRepository struct {
+type UserRepository struct {
 	col *mongo.Collection
 }
 
-func NewMongoUserRepository(db *mongo.Database) *MongoUserRepository {
-	return &MongoUserRepository{col: db.Collection("users")}
+func NewUserRepository(db *mongo.Database) *UserRepository {
+	return &UserRepository{col: db.Collection("users")}
 }
 
-func (r *MongoUserRepository) Create(ctx context.Context, u *models.User) (string, error) {
+func (r *UserRepository) Create(ctx context.Context, u *models.User) (string, error) {
 	if u == nil {
 		return "", errors.New("nil user")
 	}
@@ -28,7 +29,6 @@ func (r *MongoUserRepository) Create(ctx context.Context, u *models.User) (strin
 		u.CreatedAt = now
 	}
 	u.UpdatedAt = now
-	
 	_, err := r.col.InsertOne(ctx, u)
 	if err != nil {
 		return "", err
@@ -36,40 +36,39 @@ func (r *MongoUserRepository) Create(ctx context.Context, u *models.User) (strin
 	return u.ID, nil
 }
 
-func (r *MongoUserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
+func (r *UserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
 	var out models.User
 	err := r.col.FindOne(ctx, bson.M{"id": id}).Decode(&out)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, nil
 	}
 	return &out, err
 }
 
-func (r *MongoUserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) {
+func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) {
 	var out models.User
 	err := r.col.FindOne(ctx, bson.M{"username": username}).Decode(&out)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, nil
 	}
 	return &out, err
 }
 
-func (r *MongoUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
+func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 	var out models.User
 	err := r.col.FindOne(ctx, bson.M{"email": email}).Decode(&out)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, nil
 	}
 	return &out, err
 }
 
-func (r *MongoUserRepository) List(ctx context.Context) ([]*models.User, error) {
+func (r *UserRepository) List(ctx context.Context) ([]*models.User, error) {
 	cur, err := r.col.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
 	defer cur.Close(ctx)
-
 	var out []*models.User
 	for cur.Next(ctx) {
 		var u models.User
@@ -81,13 +80,12 @@ func (r *MongoUserRepository) List(ctx context.Context) ([]*models.User, error) 
 	return out, cur.Err()
 }
 
-func (r *MongoUserRepository) FilterByRole(ctx context.Context, role string) ([]*models.User, error) {
+func (r *UserRepository) FilterByRole(ctx context.Context, role string) ([]*models.User, error) {
 	cur, err := r.col.Find(ctx, bson.M{"role": role})
 	if err != nil {
 		return nil, err
 	}
 	defer cur.Close(ctx)
-
 	var out []*models.User
 	for cur.Next(ctx) {
 		var u models.User
@@ -99,7 +97,7 @@ func (r *MongoUserRepository) FilterByRole(ctx context.Context, role string) ([]
 	return out, cur.Err()
 }
 
-func (r *MongoUserRepository) UpdateProfile(ctx context.Context, id string, p models.Profile) error {
+func (r *UserRepository) UpdateProfile(ctx context.Context, id string, p models.Profile) error {
 	_, err := r.col.UpdateOne(ctx,
 		bson.M{"id": id},
 		bson.M{"$set": bson.M{
@@ -112,7 +110,7 @@ func (r *MongoUserRepository) UpdateProfile(ctx context.Context, id string, p mo
 	return err
 }
 
-func (r *MongoUserRepository) UpdateCore(ctx context.Context, id, username, email, passwordHash, role string) error {
+func (r *UserRepository) UpdateCore(ctx context.Context, id, username, email, passwordHash, role string) error {
 	set := bson.M{"updated_at": time.Now()}
 	if username != "" {
 		set["username"] = username
@@ -126,14 +124,13 @@ func (r *MongoUserRepository) UpdateCore(ctx context.Context, id, username, emai
 	if role != "" {
 		set["role"] = role
 	}
-
 	_, err := r.col.UpdateOne(ctx, bson.M{"id": id}, bson.M{"$set": set})
 	return err
 }
 
-func (r *MongoUserRepository) Delete(ctx context.Context, id string) error {
+func (r *UserRepository) Delete(ctx context.Context, id string) error {
 	_, err := r.col.DeleteOne(ctx, bson.M{"id": id})
 	return err
 }
 
-var _ interfaces.UserRepository = (*MongoUserRepository)(nil)
+var _ interfaces.UserRepository = (*UserRepository)(nil)

@@ -5,45 +5,52 @@ import (
 	"log"
 	"time"
 
+	"devflow/internal/config"
 	"devflow/internal/db"
 	"devflow/internal/handlers"
-	"devflow/internal/repositories"
+	repo "devflow/internal/persistence/mongodb"
 	"devflow/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	mongo, err := db.NewMongo("mongodb://127.0.0.1:27017", "devflow", 20, 10*time.Second)
+	cfg := config.LoadConfig()
+
+	if cfg.Database.DBName == "" {
+		cfg.Database.DBName = "devflow"
+	}
+	if cfg.Database.MaxPool == 0 {
+		cfg.Database.MaxPool = 10
+	}
+	if cfg.Database.Timeout == 0 {
+		cfg.Database.Timeout = 10 * time.Second
+	}
+
+	mongo, err := db.NewMongo(
+		cfg.Database.MongoURI,
+		cfg.Database.DBName,
+		cfg.Database.MaxPool,
+		cfg.Database.Timeout,
+	)
 	if err != nil {
 		log.Fatal("mongo connect error:", err)
 	}
 	defer mongo.Close(context.Background())
 
-	userRepo := repositories.NewMongoUserRepository(mongo.Database)
-
-	userSvc := services.NewUserServiceWithRepo(userRepo)
-
+	userRepo := repo.NewUserRepository(mongo.Database)
+	userSvc := services.NewUserService(userRepo)
 	handlers.InitUserService(userSvc)
 
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			switch err {
 			case services.ErrEmailExists:
-				return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-					"success": false,
-					"message": err.Error(),
-				})
+				return c.Status(fiber.StatusConflict).JSON(fiber.Map{"success": false, "message": err.Error()})
 			case services.ErrInvalidEmail:
-				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"success": false,
-					"message": err.Error(),
-				})
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": err.Error()})
 			default:
-				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-					"success": false,
-					"message": err.Error(),
-				})
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "message": err.Error()})
 			}
 		},
 	})

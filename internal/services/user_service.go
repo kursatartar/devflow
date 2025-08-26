@@ -1,108 +1,91 @@
 package services
 
 import (
+	"context"
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
-	"fmt"
-	"time"
 )
 
-type UserManager struct{}
+type UserManager struct {
+	repo interfaces.UserRepository
+}
 
-func NewUserService() interfaces.UserService {
-	return &UserManager{}
+func NewUserService(repo interfaces.UserRepository) interfaces.UserService {
+
+	return &UserManager{repo}
 }
 
 func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) (*models.User, error) {
-	for _, u := range models.Users {
-		if u.Email == email {
-			return nil, ErrEmailExists
-		}
+	if existing, _ := s.repo.GetByEmail(context.Background(), email); existing != nil {
+		return nil, ErrEmailExists
 	}
 
-	profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
-	user, err := models.NewUser(id, username, email, passwordHash, role, profile)
+	user, err := models.NewUser(id, username, email, passwordHash, role, models.Profile{
+		FirstName: firstName, LastName: lastName, AvatarURL: avatarURL,
+	})
 	if err != nil {
-		return nil, fmt.Errorf("kullanıcı oluşturulamadı: %w", err)
+		return nil, err
 	}
-
 	ok, err := user.IsEmailValid()
 	if err != nil {
-		return nil, fmt.Errorf("email validasyon hatası: %w", err)
+		return nil, err
 	}
 	if !ok {
 		return nil, ErrInvalidEmail
 	}
-
-	models.Users[user.ID] = user
+	_, err = s.repo.Create(context.Background(), user)
+	if err != nil {
+		return nil, err
+	}
 	return user, nil
 }
 
 func (s *UserManager) ListUsers() []*models.User {
-	out := make([]*models.User, 0, len(models.Users))
-	for _, u := range models.Users {
-		out = append(out, u)
+	list, err := s.repo.List(context.Background())
+	if err != nil {
+		return nil
 	}
-	return out
+	return list
 }
 
 func (s *UserManager) FilterUsersByRole(role string) []*models.User {
-	var filtered []*models.User
-	for _, u := range models.Users {
-		if u.Role == role {
-			filtered = append(filtered, u)
-		}
-	}
-	return filtered
+	out, _ := s.repo.FilterByRole(context.Background(), role)
+	return out
 }
 
 func (s *UserManager) UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole, newFirstName, newLastName, newAvatarURL string) error {
-	user, exists := models.Users[id]
-	if !exists {
-		return ErrUserNotFound
-	}
-
-	for _, u := range models.Users {
-		if u.Email == newEmail && u.ID != id {
+	if newEmail != "" {
+		if u, _ := s.repo.GetByEmail(context.Background(), newEmail); u != nil && u.ID != id {
 			return ErrEmailExists
 		}
+		temp := &models.User{Email: newEmail}
+		if ok, err := temp.IsEmailValid(); err != nil || !ok {
+			if err != nil {
+				return err
+			}
+			return ErrInvalidEmail
+		}
 	}
-
-	tempUser := *user
-	tempUser.Email = newEmail
-	isValid, err := tempUser.IsEmailValid()
-	if err != nil {
+	if err := s.repo.UpdateCore(context.Background(), id, newUsername, newEmail, newPasswordHash, newRole); err != nil {
 		return err
 	}
-	if !isValid {
-		return ErrInvalidEmail
-	}
-
-	user.Username = newUsername
-	user.Email = newEmail
-	user.PasswordHash = newPasswordHash
-	user.Role = newRole
-	user.Profile = models.Profile{
+	return s.repo.UpdateProfile(context.Background(), id, models.Profile{
 		FirstName: newFirstName,
 		LastName:  newLastName,
 		AvatarURL: newAvatarURL,
-	}
-	user.UpdatedAt = time.Now()
-
-	return nil
+	})
 }
 
 func (s *UserManager) DeleteUser(id string) error {
-	if _, exists := models.Users[id]; exists {
-		delete(models.Users, id)
-		return nil
-	}
-	return ErrUserNotFound
+	return s.repo.Delete(context.Background(), id)
 }
 
 func (s *UserManager) GetUser(id string) (*models.User, error) {
-	u, ok := models.Users[id]
-	if !ok {
+	u, err := s.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
 		return nil, ErrUserNotFound
 	}
 	return u, nil
