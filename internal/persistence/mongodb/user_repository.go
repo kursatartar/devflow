@@ -2,14 +2,12 @@ package mongodb
 
 import (
 	"context"
-	"errors"
-	"time"
-
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
-
+	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type UserRepository struct {
@@ -68,7 +66,11 @@ func (r *UserRepository) List(ctx context.Context) ([]*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer cur.Close(ctx)
+	defer func(cur *mongo.Cursor, ctx context.Context) {
+		err := cur.Close(ctx)
+		if err != nil {
+		}
+	}(cur, ctx)
 	var out []*models.User
 	for cur.Next(ctx) {
 		var u models.User

@@ -10,8 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var userService = services.NewUserService()
-
 func CreateUser(c *fiber.Ctx) error {
 	var body requests.CreateUserReq
 	if err := c.BodyParser(&body); err != nil {

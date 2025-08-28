@@ -42,6 +42,10 @@ func main() {
 	userSvc := services.NewUserService(userRepo)
 	handlers.InitUserService(userSvc)
 
+	taskRepo := repo.NewTaskRepository(mongo.Database)
+	taskSvc := services.NewTaskService(taskRepo)
+	handlers.InitTaskService(taskSvc)
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			switch err {

@@ -10,8 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var taskService = services.NewTaskService()
-
 func CreateTask(c *fiber.Ctx) error {
 	var body requests.CreateTaskReq
 	if err := c.BodyParser(&body); err != nil {

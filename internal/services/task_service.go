@@ -1,100 +1,72 @@
 package services
 
 import (
+	"context"
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
 	"time"
-
-	"github.com/google/uuid"
 )
 
-type TaskManager struct{}
-
-func NewTaskService() interfaces.TaskService {
-	return &TaskManager{}
+type TaskManager struct {
+	repo interfaces.TaskRepository
 }
 
-func (t TaskManager) CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) (*models.Task, error) {
-	if id == "" {
-		id = uuid.NewString()
-	}
-	if _, exists := models.Tasks[id]; exists {
-		return nil, ErrTaskExists
-	}
+func NewTaskService(repo interfaces.TaskRepository) interfaces.TaskService {
+	return &TaskManager{repo}
+}
+
+func (t *TaskManager) CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) (*models.Task, error) {
 	if _, err := time.Parse(time.RFC3339, dueDate); err != nil {
 		return nil, ErrInvalidDueDate
 	}
 	task := models.NewTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate, labels, estimated, logged)
-	models.Tasks[id] = task
+	_, err := t.repo.Create(context.Background(), task)
+	if err != nil {
+		return nil, err
+	}
 	return task, nil
 }
 
-func (t TaskManager) UpdateTask(id string, title, description, status, priority, dueDate *string, labels *[]string, estimated, logged *float64) (*models.Task, error) {
-	task, ok := models.Tasks[id]
-	if !ok {
-		return nil, ErrTaskNotFound
-	}
-	if title != nil {
-		task.Title = *title
-	}
-	if description != nil {
-		task.Description = *description
-	}
-	if status != nil {
-		task.Status = *status
-	}
-	if priority != nil {
-		task.Priority = *priority
-	}
+func (t *TaskManager) UpdateTask(id string, title, description, status, priority, dueDate *string, labels *[]string, estimated, logged *float64) (*models.Task, error) {
 	if dueDate != nil {
 		if _, err := time.Parse(time.RFC3339, *dueDate); err != nil {
 			return nil, ErrInvalidDueDate
 		}
-		task.DueDate = *dueDate
 	}
-	if labels != nil {
-		task.Labels = *labels
+	if err := t.repo.UpdateFields(context.Background(), id, title, description, status, priority, dueDate, labels, estimated, logged); err != nil {
+		return nil, err
 	}
-	if estimated != nil {
-		task.TimeTracking.EstimatedHours = *estimated
+	out, err := t.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
 	}
-	if logged != nil {
-		task.TimeTracking.LoggedHours = *logged
+	if out == nil {
+		return nil, ErrTaskNotFound
 	}
-	task.UpdatedAt = time.Now()
-	return task, nil
+	return out, nil
 }
 
-func (t TaskManager) DeleteTask(id string) error {
-	if _, exists := models.Tasks[id]; !exists {
-		return ErrTaskNotFound
-	}
-	delete(models.Tasks, id)
-	return nil
+func (t *TaskManager) DeleteTask(id string) error {
+	return t.repo.Delete(context.Background(), id)
 }
 
-func (t TaskManager) ListTasks() []*models.Task {
-	out := make([]*models.Task, 0, len(models.Tasks))
-	for _, task := range models.Tasks {
-		out = append(out, task)
-	}
+func (t *TaskManager) ListTasks() []*models.Task {
+	out, _ := t.repo.List(context.Background())
 	return out
 }
 
-func (t TaskManager) FilterTasksByProject(projectID string) []*models.Task {
-	var tasks []*models.Task
-	for _, task := range models.Tasks {
-		if task.ProjectID == projectID {
-			tasks = append(tasks, task)
-		}
-	}
-	return tasks
+func (t *TaskManager) FilterTasksByProject(projectID string) []*models.Task {
+	out, _ := t.repo.FilterByProject(context.Background(), projectID)
+	return out
 }
 
-func (t TaskManager) GetTask(id string) (*models.Task, error) {
-	task, ok := models.Tasks[id]
-	if !ok {
+func (t *TaskManager) GetTask(id string) (*models.Task, error) {
+	out, err := t.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	if out == nil {
 		return nil, ErrTaskNotFound
 	}
-	return task, nil
+	return out, nil
 }

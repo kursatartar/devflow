@@ -90,3 +90,5 @@ func (s *UserManager) GetUser(id string) (*models.User, error) {
 	}
 	return u, nil
 }
+
+var _ interfaces.UserService = (*UserManager)(nil)
