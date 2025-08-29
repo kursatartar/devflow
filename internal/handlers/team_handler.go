@@ -12,8 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var teamService = services.NewTeamService()
-
 func CreateTeam(c *fiber.Ctx) error {
 	var body requests.CreateTeamReq
 	if err := c.BodyParser(&body); err != nil {

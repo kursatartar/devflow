@@ -10,8 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var projectService = services.NewProjectService()
-
 func CreateProject(c *fiber.Ctx) error {
 	var body requests.CreateProjectReq
 	if err := c.BodyParser(&body); err != nil {

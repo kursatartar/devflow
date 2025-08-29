@@ -1,74 +1,73 @@
 package services
 
 import (
+	"context"
+	"devflow/internal/interfaces"
 	"devflow/internal/models"
-	"errors"
-	"github.com/google/uuid"
-	"time"
 )
 
-type ProjectManager struct{}
-
-func NewProjectService() *ProjectManager {
-	return &ProjectManager{}
+type ProjectManager struct {
+	repo interfaces.ProjectRepository
 }
 
-func (s *ProjectManager) CreateProject(id, name, description, ownerID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
-	if id == "" {
-		id = uuid.NewString()
-	}
-	if _, exists := models.Projects[id]; exists {
-		return nil, errors.New("project already exists")
-	}
-	project := models.NewProject(id, name, description, ownerID, teamMembers, status, isPrivate, taskWorkflow)
-	models.Projects[id] = project
-	return project, nil
+func NewProjectService(repo interfaces.ProjectRepository) interfaces.ProjectService {
+	return &ProjectManager{repo}
 }
 
-func (s *ProjectManager) ListProjects() []*models.Project {
-	out := make([]*models.Project, 0, len(models.Projects))
-	for _, p := range models.Projects {
-		out = append(out, p)
+func (p *ProjectManager) CreateProject(id, name, description, ownerID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+	pr := models.NewProject(id, name, description, ownerID, teamMembers, status, isPrivate, taskWorkflow)
+	_, err := p.repo.Create(context.Background(), pr)
+	if err != nil {
+		return nil, err
 	}
+	return pr, nil
+}
+
+func (p *ProjectManager) ListProjects() []*models.Project {
+	out, _ := p.repo.List(context.Background())
 	return out
 }
 
-func (s *ProjectManager) UpdateProject(id, name, description, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
-	project, ok := models.Projects[id]
-	if !ok {
+func (p *ProjectManager) GetProject(id string) (*models.Project, error) {
+	out, err := p.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	if out == nil {
 		return nil, ErrProjectNotFound
 	}
-	project.Name = name
-	project.Description = description
-	project.Status = status
-	project.TeamMembers = teamMembers
-	project.Settings.IsPrivate = isPrivate
-	project.Settings.TaskWorkflow = taskWorkflow
-	project.UpdatedAt = time.Now()
-	return project, nil
+	return out, nil
 }
 
-func (s *ProjectManager) DeleteProject(id string) error {
-	if _, ok := models.Projects[id]; !ok {
-		return ErrProjectNotFound
-	}
-	delete(models.Projects, id)
-	return nil
+func (p *ProjectManager) FilterProjectsByOwner(ownerID string) []*models.Project {
+	out, _ := p.repo.FilterByOwner(context.Background(), ownerID)
+	return out
 }
 
-func (s *ProjectManager) FilterProjectsByOwner(ownerID string) []*models.Project {
-	var filtered []*models.Project
-	for _, p := range models.Projects {
-		if p.OwnerID == ownerID {
-			filtered = append(filtered, p)
-		}
+func (p *ProjectManager) UpdateProject(id string, name string, description string, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+	namePtr := &name
+	descPtr := &description
+	statusPtr := &status
+	membersPtr := &teamMembers
+	privatePtr := &isPrivate
+	workflowPtr := &taskWorkflow
+	var ownerPtr *string = nil
+
+	if err := p.repo.UpdateFields(context.Background(), id, namePtr, descPtr, statusPtr, membersPtr, privatePtr, workflowPtr, ownerPtr); err != nil {
+		return nil, err
 	}
-	return filtered
-}
-func (s *ProjectManager) GetProject(id string) (*models.Project, error) {
-	project, ok := models.Projects[id]
-	if !ok {
+	out, err := p.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	if out == nil {
 		return nil, ErrProjectNotFound
 	}
-	return project, nil
+	return out, nil
 }
+
+func (p *ProjectManager) DeleteProject(id string) error {
+	return p.repo.Delete(context.Background(), id)
+}
+
+var _ interfaces.ProjectService = (*ProjectManager)(nil)
