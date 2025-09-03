@@ -8,20 +8,20 @@ import (
 )
 
 type Profile struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	AvatarURL string `json:"avatar_url"`
+	FirstName string `json:"first_name" bson:"first_name"`
+	LastName  string `json:"last_name"  bson:"last_name"`
+	AvatarURL string `json:"avatar_url" bson:"avatar_url"`
 }
 
 type User struct {
-	ID           string    `json:"id"`
-	Username     string    `json:"username"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"password_hash"`
-	Role         string    `json:"role"`
-	Profile      Profile   `json:"profile"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID           string    `json:"id"            bson:"_id"`
+	Username     string    `json:"username"      bson:"username"`
+	Email        string    `json:"email"         bson:"email"`
+	PasswordHash string    `json:"-"             bson:"password_hash"`
+	Role         string    `json:"role"          bson:"role"`
+	Profile      Profile   `json:"profile"       bson:"profile"`
+	CreatedAt    time.Time `json:"created_at"   bson:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"   bson:"updated_at"`
 }
 
 var Users = map[string]*User{}

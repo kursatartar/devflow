@@ -53,12 +53,25 @@ func (s *UserManager) FilterUsersByRole(role string) []*models.User {
 	return out
 }
 
-func (s *UserManager) UpdateUser(id, newUsername, newEmail, newPasswordHash, newRole, newFirstName, newLastName, newAvatarURL string) error {
-	if newEmail != "" {
-		if u, _ := s.repo.GetByEmail(context.Background(), newEmail); u != nil && u.ID != id {
+func (s *UserManager) UpdateUser(
+	id string,
+	newUsername, newEmail, newPasswordHash, newRole,
+	newFirstName, newLastName, newAvatarURL *string,
+) error {
+
+	v := func(p *string) string {
+		if p == nil {
+			return ""
+		}
+		return *p
+	}
+
+	if newEmail != nil && *newEmail != "" {
+		if u, _ := s.repo.GetByEmail(context.Background(), *newEmail); u != nil && u.ID != id {
+
 			return ErrEmailExists
 		}
-		temp := &models.User{Email: newEmail}
+		temp := &models.User{Email: *newEmail}
 		if ok, err := temp.IsEmailValid(); err != nil || !ok {
 			if err != nil {
 				return err
@@ -66,13 +79,13 @@ func (s *UserManager) UpdateUser(id, newUsername, newEmail, newPasswordHash, new
 			return ErrInvalidEmail
 		}
 	}
-	if err := s.repo.UpdateCore(context.Background(), id, newUsername, newEmail, newPasswordHash, newRole); err != nil {
+	if err := s.repo.UpdateCore(context.Background(), id, v(newUsername), v(newEmail), v(newPasswordHash), v(newRole)); err != nil {
 		return err
 	}
 	return s.repo.UpdateProfile(context.Background(), id, models.Profile{
-		FirstName: newFirstName,
-		LastName:  newLastName,
-		AvatarURL: newAvatarURL,
+		FirstName: v(newFirstName),
+		LastName:  v(newLastName),
+		AvatarURL: v(newAvatarURL),
 	})
 }
 

@@ -65,7 +65,7 @@ func CreateUser(c *fiber.Ctx) error {
 }
 func ListUsers(c *fiber.Ctx) error {
 	users := userService.ListUsers()
-	return responses.Success(c, "user fetched successfully", converters.ToUserListResponse(users))
+	return responses.Success(c, "users fetched successfully", converters.ToUserListResponse(users))
 }
 
 func v(s *string) string {
@@ -82,27 +82,24 @@ func UpdateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-	if len(c.Body()) == 0 {
-		return responses.ValidationError(c, "request body required")
-	}
 
 	if err := userService.UpdateUser(
 		id,
-		v(body.Username),
-		v(body.Email),
-		v(body.PasswordHash),
-		v(body.Role),
-		v(body.FirstName),
-		v(body.LastName),
-		v(body.AvatarURL),
+		body.Username,
+		body.Email,
+		body.PasswordHash,
+		body.Role,
+		body.FirstName,
+		body.LastName,
+		body.AvatarURL,
 	); err != nil {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
 			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
-		case errors.Is(err, services.ErrInvalidEmail):
-			return responses.ValidationError(c, err.Error())
 		case errors.Is(err, services.ErrEmailExists):
-			return responses.Conflict(c, err.Error())
+			return responses.Conflict(c, "email already exists")
+		case errors.Is(err, services.ErrInvalidEmail):
+			return responses.ValidationError(c, "invalid email format")
 		default:
 			return responses.Internal(c, err)
 		}
@@ -110,9 +107,6 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	u, err := userService.GetUser(id)
 	if err != nil {
-		if errors.Is(err, services.ErrUserNotFound) {
-			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
-		}
 		return responses.Internal(c, err)
 	}
 
@@ -120,7 +114,7 @@ func UpdateUser(c *fiber.Ctx) error {
 }
 
 func DeleteUser(c *fiber.Ctx) error {
-	id := c.Params("id")
+	id := c.Params("_id")
 	if err := userService.DeleteUser(id); err != nil {
 
 		if errors.Is(err, services.ErrUserNotFound) {
@@ -132,7 +126,7 @@ func DeleteUser(c *fiber.Ctx) error {
 }
 
 func GetUser(c *fiber.Ctx) error {
-	id := c.Params("id")
+	id := c.Params("_id")
 	u, err := userService.GetUser(id)
 	if err != nil {
 		if errors.Is(err, services.ErrUserNotFound) {
