@@ -1,13 +1,8 @@
 package requests
 
-import "devflow/internal/models"
-
-type CreateTeamReq struct {
-	Name        string                `json:"name"`
-	Description string                `json:"description"`
-	OwnerID     string                `json:"owner_id"`
-	Members     []CreateTeamMemberReq `json:"members"`
-	Settings    models.TeamSettings   `json:"settings"`
+type TeamSettingsReq struct {
+	IsPrivate         bool `json:"is_private"`
+	AllowMemberInvite bool `json:"allow_member_invite"`
 }
 
 type CreateTeamMemberReq struct {
@@ -15,10 +10,18 @@ type CreateTeamMemberReq struct {
 	Role   string `json:"role"`
 }
 
+type CreateTeamReq struct {
+	Name        string                `json:"name"`
+	Description string                `json:"description"`
+	OwnerID     string                `json:"owner_id"`
+	Members     []CreateTeamMemberReq `json:"members"`
+	Settings    TeamSettingsReq       `json:"settings"`
+}
+
 type UpdateTeamReq struct {
-	Name        *string              `json:"name"`
-	Description *string              `json:"description"`
-	Settings    *models.TeamSettings `json:"settings"`
+	Name        *string          `json:"name"`
+	Description *string          `json:"description"`
+	Settings    *TeamSettingsReq `json:"settings"`
 }
 
 type AddMemberReq struct {

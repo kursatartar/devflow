@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"devflow/internal/models"
-	"devflow/internal/presentation/api/converters"
-	"devflow/internal/presentation/api/requests"
-	"devflow/internal/presentation/api/responses"
-	"devflow/internal/services"
 	"errors"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+
+	"devflow/internal/presentation/api/converters"
+	"devflow/internal/presentation/api/requests"
+	"devflow/internal/presentation/api/responses"
+	"devflow/internal/services"
 )
 
 func CreateTeam(c *fiber.Ctx) error {
@@ -20,11 +20,18 @@ func CreateTeam(c *fiber.Ctx) error {
 	if body.Name == "" || body.OwnerID == "" {
 		return responses.ValidationError(c, "missing required fields")
 	}
-	members := make([]models.TeamMember, 0, len(body.Members))
-	for _, m := range body.Members {
-		members = append(members, models.TeamMember{UserID: m.UserID, Role: m.Role})
-	}
-	t, err := teamService.CreateTeam("", body.Name, body.Description, body.OwnerID, members, body.Settings)
+
+	members := converters.ToDomainTeamMembers(body.Members)
+	settings := converters.ToDomainTeamSettings(body.Settings)
+
+	t, err := teamService.CreateTeam(
+		"",
+		body.Name,
+		body.Description,
+		body.OwnerID,
+		members,
+		settings,
+	)
 	if err != nil {
 		if errors.Is(err, services.ErrTeamExists) {
 			return responses.Conflict(c, err.Error())
@@ -53,6 +60,7 @@ func GetTeam(c *fiber.Ctx) error {
 
 func UpdateTeam(c *fiber.Ctx) error {
 	id := c.Params("id")
+
 	var body requests.UpdateTeamReq
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
@@ -60,7 +68,15 @@ func UpdateTeam(c *fiber.Ctx) error {
 	if len(c.Body()) == 0 {
 		return responses.ValidationError(c, "request body required")
 	}
-	t, err := teamService.UpdateTeam(id, body.Name, body.Description, body.Settings)
+
+	domSettings := converters.ToDomainTeamSettingsPtr(body.Settings)
+
+	t, err := teamService.UpdateTeam(
+		id,
+		body.Name,
+		body.Description,
+		domSettings,
+	)
 	if err != nil {
 		if errors.Is(err, services.ErrTeamNotFound) {
 			return responses.NotFound(c, fmt.Sprintf("team %s not found", id))
@@ -72,6 +88,7 @@ func UpdateTeam(c *fiber.Ctx) error {
 
 func AddTeamMember(c *fiber.Ctx) error {
 	id := c.Params("id")
+
 	var body requests.AddMemberReq
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
@@ -79,6 +96,7 @@ func AddTeamMember(c *fiber.Ctx) error {
 	if body.UserID == "" || body.Role == "" {
 		return responses.ValidationError(c, "missing required fields")
 	}
+
 	t, err := teamService.AddMember(id, body.UserID, body.Role)
 	if err != nil {
 		if errors.Is(err, services.ErrTeamNotFound) {

@@ -10,8 +10,8 @@ type ProjectManager struct {
 	repo interfaces.ProjectRepository
 }
 
-func NewProjectService(repo interfaces.ProjectRepository) interfaces.ProjectService {
-	return &ProjectManager{repo}
+func NewProjectService(repo interfaces.ProjectRepository) *ProjectManager {
+	return &ProjectManager{repo: repo}
 }
 
 func (p *ProjectManager) CreateProject(id, name, description, ownerID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {

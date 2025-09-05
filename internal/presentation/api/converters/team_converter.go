@@ -2,6 +2,7 @@ package converters
 
 import (
 	"devflow/internal/models"
+	"devflow/internal/presentation/api/requests"
 	"devflow/internal/presentation/api/responses"
 )
 
@@ -37,5 +38,31 @@ func ToTeamListResponse(ts []*models.Team) responses.TeamListResponse {
 	var out responses.TeamListResponse
 	out.Teams = items
 	out.Metadata.Total = int64(len(items))
+	return out
+}
+
+func ToDomainTeamSettings(req requests.TeamSettingsReq) models.TeamSettings {
+	return models.TeamSettings{
+		IsPrivate:         req.IsPrivate,
+		AllowMemberInvite: req.AllowMemberInvite,
+	}
+}
+
+func ToDomainTeamSettingsPtr(req *requests.TeamSettingsReq) *models.TeamSettings {
+	if req == nil {
+		return nil
+	}
+	m := ToDomainTeamSettings(*req)
+	return &m
+}
+
+func ToDomainTeamMembers(reqs []requests.CreateTeamMemberReq) []models.TeamMember {
+	out := make([]models.TeamMember, 0, len(reqs))
+	for _, m := range reqs {
+		out = append(out, models.TeamMember{
+			UserID: m.UserID,
+			Role:   m.Role,
+		})
+	}
 	return out
 }

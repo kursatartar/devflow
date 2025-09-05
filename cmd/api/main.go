@@ -50,6 +50,10 @@ func main() {
 	teamSvc := services.NewTeamService(teamRepo)
 	handlers2.InitTeamService(teamSvc)
 
+	projectRepo := repo.NewProjectRepository(mongo.Database)
+	projectSvc := services.NewProjectService(projectRepo)
+	handlers2.InitProjectService(projectSvc)
+	
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			switch err {
