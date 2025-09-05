@@ -23,8 +23,6 @@ type Task struct {
 	UpdatedAt    time.Time    `json:"updated_at"    bson:"updated_at"`
 }
 
-var Tasks = map[string]*Task{}
-
 func NewTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) *Task {
 	return &Task{
 		ID:          id,

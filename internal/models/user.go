@@ -24,8 +24,6 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at"   bson:"updated_at"`
 }
 
-var Users = map[string]*User{}
-
 func NewUser(id, username, email, passwordHash, role string, profile Profile) (*User, error) {
 	if id == "" {
 		id = uuid.NewString()

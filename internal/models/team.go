@@ -2,8 +2,6 @@ package models
 
 import "time"
 
-var Teams = map[string]*Team{}
-
 type TeamMember struct {
 	UserID   string    `json:"user_id"`
 	Role     string    `json:"role"`

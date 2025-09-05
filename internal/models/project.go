@@ -19,8 +19,6 @@ type Project struct {
 	UpdatedAt   time.Time       `json:"updated_at"   bson:"updated_at"`
 }
 
-var Projects = map[string]*Project{}
-
 func NewProject(id, name, description, ownerID string, teamMembers []string, status string, isPrivate bool, taskWorkflow []string) *Project {
 	return &Project{
 		ID:          id,
