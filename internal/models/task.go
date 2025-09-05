@@ -3,24 +3,24 @@ package models
 import "time"
 
 type TimeTracking struct {
-	EstimatedHours float64 `json:"estimated_hours"`
-	LoggedHours    float64 `json:"logged_hours"`
+	EstimatedHours float64 `json:"estimated_hours" bson:"estimated_hours"`
+	LoggedHours    float64 `json:"logged_hours"    bson:"logged_hours"`
 }
 
 type Task struct {
-	ID           string       `json:"id"`
-	Title        string       `json:"title"`
-	Description  string       `json:"description"`
-	ProjectID    string       `json:"project_id"`
-	AssignedTo   string       `json:"assigned_to"`
-	CreatedBy    string       `json:"created_by"`
-	Status       string       `json:"status"`
-	Priority     string       `json:"priority"`
-	Labels       []string     `json:"labels"`
-	DueDate      string       `json:"due_date"`
-	TimeTracking TimeTracking `json:"time_tracking"`
-	CreatedAt    time.Time    `json:"created_at"`
-	UpdatedAt    time.Time    `json:"updated_at"`
+	ID           string       `json:"id"            bson:"_id,omitempty"`
+	Title        string       `json:"title"         bson:"title"`
+	Description  string       `json:"description"   bson:"description"`
+	ProjectID    string       `json:"project_id"    bson:"project_id"`
+	AssignedTo   string       `json:"assigned_to"   bson:"assigned_to"`
+	CreatedBy    string       `json:"created_by"    bson:"created_by"`
+	Status       string       `json:"status"        bson:"status"`
+	Priority     string       `json:"priority"      bson:"priority"`
+	Labels       []string     `json:"labels"        bson:"labels"`
+	DueDate      string       `json:"due_date"      bson:"due_date"`
+	TimeTracking TimeTracking `json:"time_tracking" bson:"time_tracking"`
+	CreatedAt    time.Time    `json:"created_at"    bson:"created_at"`
+	UpdatedAt    time.Time    `json:"updated_at"    bson:"updated_at"`
 }
 
 var Tasks = map[string]*Task{}

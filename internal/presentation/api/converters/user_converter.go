@@ -2,7 +2,7 @@ package converters
 
 import (
 	"devflow/internal/models"
-	"devflow/internal/responses"
+	"devflow/internal/presentation/api/responses"
 )
 
 func ToUserResponse(u *models.User) responses.UserResponse {

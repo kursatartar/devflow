@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"devflow/internal/converters"
-	"devflow/internal/requests"
-	"devflow/internal/responses"
+	"devflow/internal/presentation/api/converters"
+	"devflow/internal/presentation/api/requests"
+	"devflow/internal/presentation/api/responses"
 	"devflow/internal/services"
 	"errors"
 

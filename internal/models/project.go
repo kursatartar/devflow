@@ -3,20 +3,20 @@ package models
 import "time"
 
 type ProjectSettings struct {
-	IsPrivate    bool
-	TaskWorkflow []string
+	IsPrivate    bool     `json:"is_private"    bson:"is_private"`
+	TaskWorkflow []string `json:"task_workflow" bson:"task_workflow"`
 }
 
 type Project struct {
-	ID          string          `json:"id"`
-	Name        string          `json:"name"`
-	Description string          `json:"description"`
-	OwnerID     string          `json:"owner_id"`
-	TeamMembers []string        `json:"team_members"`
-	Status      string          `json:"status"`
-	Settings    ProjectSettings `json:"settings"`
-	CreatedAt   time.Time       `json:"created_at"`
-	UpdatedAt   time.Time       `json:"updated_at"`
+	ID          string          `json:"id"           bson:"_id,omitempty"`
+	Name        string          `json:"name"         bson:"name"`
+	Description string          `json:"description"  bson:"description"`
+	OwnerID     string          `json:"owner_id"     bson:"owner_id"`
+	TeamMembers []string        `json:"team_members" bson:"team_members"`
+	Status      string          `json:"status"       bson:"status"`
+	Settings    ProjectSettings `json:"settings"     bson:"settings"`
+	CreatedAt   time.Time       `json:"created_at"   bson:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"   bson:"updated_at"`
 }
 
 var Projects = map[string]*Project{}

@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	handlers2 "devflow/internal/presentation/api/handlers"
 	"log"
 	"time"
 
 	"devflow/internal/config"
 	"devflow/internal/db"
-	"devflow/internal/handlers"
 	repo "devflow/internal/persistence/mongodb"
 	"devflow/internal/services"
 
@@ -40,15 +40,15 @@ func main() {
 
 	userRepo := repo.NewUserRepository(mongo.Database)
 	userSvc := services.NewUserService(userRepo)
-	handlers.InitUserService(userSvc)
+	handlers2.InitUserService(userSvc)
 
 	taskRepo := repo.NewTaskRepository(mongo.Database)
 	taskSvc := services.NewTaskService(taskRepo)
-	handlers.InitTaskService(taskSvc)
+	handlers2.InitTaskService(taskSvc)
 
 	teamRepo := repo.NewTeamRepository(mongo.Database)
 	teamSvc := services.NewTeamService(teamRepo)
-	handlers.InitTeamService(teamSvc)
+	handlers2.InitTeamService(teamSvc)
 
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
@@ -82,33 +82,33 @@ func main() {
 	})
 
 	users := api.Group("/users")
-	users.Post("/", handlers.CreateUser)
-	users.Get("/", handlers.ListUsers)
-	users.Get("/:id", handlers.GetUser)
-	users.Put("/:id", handlers.UpdateUser)
-	users.Delete("/:id", handlers.DeleteUser)
+	users.Post("/", handlers2.CreateUser)
+	users.Get("/", handlers2.ListUsers)
+	users.Get("/:id", handlers2.GetUser)
+	users.Put("/:id", handlers2.UpdateUser)
+	users.Delete("/:id", handlers2.DeleteUser)
 
 	projects := api.Group("/projects")
-	projects.Get("/", handlers.ListProjects)
-	projects.Post("/", handlers.CreateProject)
-	projects.Get("/:id", handlers.GetProject)
-	projects.Put("/:id", handlers.UpdateProject)
-	projects.Delete("/:id", handlers.DeleteProject)
+	projects.Get("/", handlers2.ListProjects)
+	projects.Post("/", handlers2.CreateProject)
+	projects.Get("/:id", handlers2.GetProject)
+	projects.Put("/:id", handlers2.UpdateProject)
+	projects.Delete("/:id", handlers2.DeleteProject)
 
 	tasks := api.Group("/tasks")
-	tasks.Post("", handlers.CreateTask)
-	tasks.Get("", handlers.ListTasks)
-	tasks.Get("/:id", handlers.GetTask)
-	tasks.Put("/:id", handlers.UpdateTask)
-	tasks.Delete("/:id", handlers.DeleteTask)
+	tasks.Post("", handlers2.CreateTask)
+	tasks.Get("", handlers2.ListTasks)
+	tasks.Get("/:id", handlers2.GetTask)
+	tasks.Put("/:id", handlers2.UpdateTask)
+	tasks.Delete("/:id", handlers2.DeleteTask)
 
 	teams := api.Group("/teams")
-	teams.Get("/", handlers.ListTeams)
-	teams.Post("/", handlers.CreateTeam)
-	teams.Get("/:id", handlers.GetTeam)
-	teams.Put("/:id", handlers.UpdateTeam)
-	teams.Delete("/:id", handlers.DeleteTeam)
-	teams.Post("/:id/members", handlers.AddTeamMember)
+	teams.Get("/", handlers2.ListTeams)
+	teams.Post("/", handlers2.CreateTeam)
+	teams.Get("/:id", handlers2.GetTeam)
+	teams.Put("/:id", handlers2.UpdateTeam)
+	teams.Delete("/:id", handlers2.DeleteTeam)
+	teams.Post("/:id/members", handlers2.AddTeamMember)
 
 	log.Fatal(app.Listen(":8080"))
 }

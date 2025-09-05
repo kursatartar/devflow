@@ -1,8 +1,8 @@
 package main
 
 import (
-	"devflow/internal/handlers"
 	"devflow/internal/models"
+	handlers2 "devflow/internal/presentation/api/handlers"
 	"devflow/tools/generics"
 	"flag"
 	"fmt"
@@ -49,9 +49,9 @@ func main() {
 func handleUserSection(action, username, email, password, role, firstName, lastName, avatar string) {
 	switch action {
 	case "create":
-		handlers.CreateUser(username, username, email, password, role, firstName, lastName, avatar)
+		handlers2.CreateUser(username, username, email, password, role, firstName, lastName, avatar)
 	case "list":
-		handlers.ListUsers()
+		handlers2.ListUsers()
 	default:
 		fmt.Println("gecerli bir action girilmeli")
 	}
@@ -66,9 +66,9 @@ func handleProjectSection(action, id, name, desc, ownerID, status string, isPriv
 		}
 		team := splitCSV(membersRaw)
 		workflow := splitCSV(workflowRaw)
-		handlers.CreateProject(id, name, desc, ownerID, status, team, isPrivate, workflow)
+		handlers2.CreateProject(id, name, desc, ownerID, status, team, isPrivate, workflow)
 	case "list":
-		handlers.ListProjects()
+		handlers2.ListProjects()
 	default:
 		fmt.Println("gecerli bir action girilmeli")
 	}
