@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"devflow/internal/presentation/api/converters"
-	"devflow/internal/presentation/api/requests"
-	"devflow/internal/presentation/api/responses"
-	"devflow/internal/services"
-	"errors"
-	"fmt"
-	"github.com/gofiber/fiber/v2"
+    "devflow/internal/presentation/api/converters"
+    "devflow/internal/presentation/api/requests"
+    "devflow/internal/presentation/api/responses"
+    "devflow/internal/services"
+    "errors"
+    "fmt"
+    "github.com/gofiber/fiber/v2"
 )
 
 func CreateUser(c *fiber.Ctx) error {
@@ -15,28 +15,9 @@ func CreateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-
-	if body.Username == "" {
-		return responses.ValidationError(c, "username boş olamaz")
-	}
-	if body.Email == "" {
-		return responses.ValidationError(c, "email boş olamaz")
-	}
-	if body.PasswordHash == "" {
-		return responses.ValidationError(c, "hash boş olamaz")
-	}
-	if body.Role == "" {
-		return responses.ValidationError(c, "role boş olamaz")
-	}
-	if body.FirstName == "" {
-		return responses.ValidationError(c, "firstname boş olamaz")
-	}
-	if body.LastName == "" {
-		return responses.ValidationError(c, "lastname boş olamaz")
-	}
-	if body.AvatarURL == "" {
-		return responses.ValidationError(c, "avatarurl boş olamaz")
-	}
+    if err := validate.Struct(body); err != nil {
+        return responses.ValidationError(c, err.Error())
+    }
 
 	u, err := userService.CreateUser(
 		"",
@@ -82,6 +63,9 @@ func UpdateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
+    if err := validate.Struct(body); err != nil {
+        return responses.ValidationError(c, err.Error())
+    }
 
 	if err := userService.UpdateUser(
 		id,
