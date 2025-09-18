@@ -1,8 +1,8 @@
 package converters
 
 import (
-	"devflow/internal/models"
-	"devflow/internal/presentation/api/responses"
+    "devflow/internal/models"
+    "devflow/internal/presentation/api/responses"
 )
 
 func ToProjectResponse(p *models.Project) responses.ProjectResponse {
@@ -11,12 +11,13 @@ func ToProjectResponse(p *models.Project) responses.ProjectResponse {
 		Name:         p.Name,
 		Description:  p.Description,
 		OwnerID:      p.OwnerID,
+        TeamID:       p.TeamID,
 		TeamMembers:  p.TeamMembers,
 		Status:       p.Status,
 		IsPrivate:    p.Settings.IsPrivate,
 		TaskWorkflow: p.Settings.TaskWorkflow,
 		CreatedAt:    p.CreatedAt,
-		UpdatedAt:    p.UpdatedAt,
+        UpdatedAt:    p.UpdatedAt,
 	}
 }
 

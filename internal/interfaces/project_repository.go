@@ -10,6 +10,6 @@ type ProjectRepository interface {
 	GetByID(ctx context.Context, id string) (*models.Project, error)
 	List(ctx context.Context) ([]*models.Project, error)
 	FilterByOwner(ctx context.Context, ownerID string) ([]*models.Project, error)
-	UpdateFields(ctx context.Context, id string, name, description, status *string, teamMembers *[]string, isPrivate *bool, taskWorkflow *[]string, ownerID *string) error
+    UpdateFields(ctx context.Context, id string, name, description, status *string, isPrivate *bool, taskWorkflow *[]string, ownerID, teamID *string) error
 	Delete(ctx context.Context, id string) error
 }

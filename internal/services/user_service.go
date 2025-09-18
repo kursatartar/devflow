@@ -12,6 +12,11 @@ type UserManager struct {
 	repo interfaces.UserRepository
 }
 
+func (s *UserManager) FilterUsersByRole(role string) []*models.User {
+	users, _ := s.repo.FilterByRole(context.Background(), role)
+	return users
+}
+
 func NewUserService(repo interfaces.UserRepository) *UserManager {
 	return &UserManager{repo: repo}
 }

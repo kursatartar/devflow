@@ -10,11 +10,8 @@ type CreateTaskReq struct {
 	Priority    string   `json:"priority"`
 	Labels      []string `json:"labels"`
 	DueDate     string   `json:"due_date"`
-}
-
-type TimeTracking struct {
-	Estimated float64 `json:"estimated_hours"`
-	Logged    float64 `json:"logged_hours"`
+	Estimated   float64  `json:"estimated_hours"`
+	Logged      float64  `json:"logged_hours"`
 }
 
 type UpdateTaskReq struct {

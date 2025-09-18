@@ -8,7 +8,7 @@ import (
 
 	"devflow/internal/config"
 	"devflow/internal/db"
-	repo "devflow/internal/persistence/mongodb"
+    repo "devflow/internal/persistence/mongodb/repositories"
 	"devflow/internal/services"
 
 	"github.com/gofiber/fiber/v2"

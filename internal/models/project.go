@@ -12,6 +12,7 @@ type Project struct {
 	Name        string          `json:"name"         bson:"name"`
 	Description string          `json:"description"  bson:"description"`
 	OwnerID     string          `json:"owner_id"     bson:"owner_id"`
+    TeamID      string          `json:"team_id"      bson:"team_id"`
 	TeamMembers []string        `json:"team_members" bson:"team_members"`
 	Status      string          `json:"status"       bson:"status"`
 	Settings    ProjectSettings `json:"settings"     bson:"settings"`
@@ -19,12 +20,13 @@ type Project struct {
 	UpdatedAt   time.Time       `json:"updated_at"   bson:"updated_at"`
 }
 
-func NewProject(id, name, description, ownerID string, teamMembers []string, status string, isPrivate bool, taskWorkflow []string) *Project {
+func NewProject(id, name, description, ownerID, teamID string, teamMembers []string, status string, isPrivate bool, taskWorkflow []string) *Project {
 	return &Project{
 		ID:          id,
 		Name:        name,
 		Description: description,
 		OwnerID:     ownerID,
+        TeamID:      teamID,
 		TeamMembers: teamMembers,
 		Status:      status,
 		Settings: ProjectSettings{

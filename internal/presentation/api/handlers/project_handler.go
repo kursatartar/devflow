@@ -15,7 +15,7 @@ func CreateProject(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-	if body.Name == "" || body.OwnerID == "" || body.Status == "" {
+	if body.Name == "" || body.OwnerID == "" || body.TeamID == "" || body.Status == "" {
 		return responses.ValidationError(c, "missing required fields")
 	}
 	p, err := projectService.CreateProject(
@@ -23,6 +23,7 @@ func CreateProject(c *fiber.Ctx) error {
 		body.Name,
 		body.Description,
 		body.OwnerID,
+		body.TeamID,
 		body.Status,
 		body.TeamMembers,
 		body.IsPrivate,
@@ -36,6 +37,7 @@ func CreateProject(c *fiber.Ctx) error {
 
 func ListProjects(c *fiber.Ctx) error {
 	ps := projectService.ListProjects()
+	// Liste uç noktasında şimdilik team detayını iliştirmiyoruz; sadece project alanları döner
 	return responses.Success(c, "projects fetched successfully", converters.ToProjectListResponse(ps))
 }
 
@@ -53,6 +55,7 @@ func UpdateProject(c *fiber.Ctx) error {
 		body.Name,
 		body.Description,
 		body.Status,
+		body.TeamID,
 		body.TeamMembers,
 		body.IsPrivate,
 		body.TaskWorkflow,
@@ -86,5 +89,15 @@ func GetProject(c *fiber.Ctx) error {
 		}
 		return responses.Internal(c, err)
 	}
-	return responses.Success(c, "project fetched successfully", converters.ToProjectResponse(p))
+	var teamResp *responses.TeamResponse
+	if p.TeamID != "" {
+		t, terr := teamService.GetTeam(p.TeamID)
+		if terr == nil && t != nil {
+			tr := converters.ToTeamResponse(t)
+			teamResp = &tr
+		}
+	}
+	resp := converters.ToProjectResponse(p)
+	resp.Team = teamResp
+	return responses.Success(c, "project fetched successfully", resp)
 }

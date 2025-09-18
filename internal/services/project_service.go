@@ -14,8 +14,8 @@ func NewProjectService(repo interfaces.ProjectRepository) *ProjectManager {
 	return &ProjectManager{repo: repo}
 }
 
-func (p *ProjectManager) CreateProject(id, name, description, ownerID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
-	pr := models.NewProject(id, name, description, ownerID, teamMembers, status, isPrivate, taskWorkflow)
+func (p *ProjectManager) CreateProject(id, name, description, ownerID, teamID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+    pr := models.NewProject(id, name, description, ownerID, teamID, teamMembers, status, isPrivate, taskWorkflow)
 	_, err := p.repo.Create(context.Background(), pr)
 	if err != nil {
 		return nil, err
@@ -44,16 +44,16 @@ func (p *ProjectManager) FilterProjectsByOwner(ownerID string) []*models.Project
 	return out
 }
 
-func (p *ProjectManager) UpdateProject(id string, name string, description string, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+func (p *ProjectManager) UpdateProject(id string, name string, description string, status string, teamID string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
 	namePtr := &name
 	descPtr := &description
 	statusPtr := &status
-	membersPtr := &teamMembers
 	privatePtr := &isPrivate
 	workflowPtr := &taskWorkflow
 	var ownerPtr *string = nil
+    teamIDPtr := &teamID
 
-	if err := p.repo.UpdateFields(context.Background(), id, namePtr, descPtr, statusPtr, membersPtr, privatePtr, workflowPtr, ownerPtr); err != nil {
+    if err := p.repo.UpdateFields(context.Background(), id, namePtr, descPtr, statusPtr, privatePtr, workflowPtr, ownerPtr, teamIDPtr); err != nil {
 		return nil, err
 	}
 	out, err := p.repo.GetByID(context.Background(), id)

@@ -79,7 +79,7 @@ func (r *ProjectRepository) FilterByOwner(ctx context.Context, ownerID string) (
 	return out, cur.Err()
 }
 
-func (r *ProjectRepository) UpdateFields(ctx context.Context, id string, name, description, status *string, teamMembers *[]string, isPrivate *bool, taskWorkflow *[]string, ownerID *string) error {
+func (r *ProjectRepository) UpdateFields(ctx context.Context, id string, name, description, status *string, isPrivate *bool, taskWorkflow *[]string, ownerID, teamID *string) error {
 	set := bson.M{"updated_at": time.Now()}
 	if name != nil {
 		set["name"] = *name
@@ -90,9 +90,6 @@ func (r *ProjectRepository) UpdateFields(ctx context.Context, id string, name, d
 	if status != nil {
 		set["status"] = *status
 	}
-	if teamMembers != nil {
-		set["team_members"] = *teamMembers
-	}
 	if isPrivate != nil {
 		set["settings.is_private"] = *isPrivate
 	}
@@ -102,6 +99,9 @@ func (r *ProjectRepository) UpdateFields(ctx context.Context, id string, name, d
 	if ownerID != nil {
 		set["owner_id"] = *ownerID
 	}
+    if teamID != nil {
+        set["team_id"] = *teamID
+    }
 	_, err := r.col.UpdateOne(ctx, bson.M{"id": id}, bson.M{"$set": set})
 	return err
 }
