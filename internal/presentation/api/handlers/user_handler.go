@@ -121,3 +121,43 @@ func GetUser(c *fiber.Ctx) error {
 
 	return responses.Success(c, "user fetched successfully", converters.ToUserResponse(u))
 }
+
+func Register(c *fiber.Ctx) error {
+    var body requests.RegisterReq
+    if err := c.BodyParser(&body); err != nil {
+        return responses.ValidationError(c, "invalid json")
+    }
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
+    u, err := userService.Register(body.Username, body.Email, body.Password, body.FirstName, body.LastName, body.AvatarURL)
+    if err != nil {
+        switch {
+        case errors.Is(err, services.ErrEmailExists):
+            return responses.Conflict(c, err.Error())
+        case errors.Is(err, services.ErrInvalidEmail):
+            return responses.ValidationError(c, err.Error())
+        default:
+            return responses.Internal(c, err)
+        }
+    }
+    return responses.Created(c, "registered successfully", converters.ToUserResponse(u))
+}
+
+func Login(c *fiber.Ctx) error {
+    var body requests.LoginReq
+    if err := c.BodyParser(&body); err != nil {
+        return responses.ValidationError(c, "invalid json")
+    }
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
+    u, err := userService.Authenticate(body.Identifier, body.Password)
+    if err != nil {
+        if errors.Is(err, services.ErrInvalidCredentials) {
+            return responses.Unauthorized(c, "invalid credentials")
+        }
+        return responses.Internal(c, err)
+    }
+    return responses.Success(c, "login successful", converters.ToUserResponse(u))
+}

@@ -71,19 +71,9 @@ func main() {
 
 	api := app.Group("/api")
 
-	auth := api.Group("/auth")
-	auth.Post("/register", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
-	})
-	auth.Post("/login", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
-	})
-	auth.Post("/refresh", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
-	})
-	auth.Post("/logout", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"success": false, "message": "not implemented"})
-	})
+    auth := api.Group("/auth")
+    auth.Post("/register", handlers2.Register)
+    auth.Post("/login", handlers2.Login)
 
 	users := api.Group("/users")
 	users.Post("/", handlers2.CreateUser)

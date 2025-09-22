@@ -10,9 +10,10 @@ var (
 	ErrProjectNotFound = errors.New("project not found")
 	ErrProjectExists   = errors.New("project already exists")
 
-	ErrTaskNotFound   = errors.New("task not found")
-	ErrTaskExists     = errors.New("task already exists")
-	ErrInvalidDueDate = errors.New("invalid due date format")
+    ErrTaskNotFound      = errors.New("task not found")
+    ErrTaskExists        = errors.New("task already exists")
+    ErrInvalidDueDate    = errors.New("invalid due date format")
+    ErrInvalidCredentials = errors.New("invalid credentials")
 
 	ErrTeamNotFound = errors.New("team not found")
 	ErrTeamExists   = errors.New("team already exists")

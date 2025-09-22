@@ -19,3 +19,17 @@ type UpdateUserReq struct {
     LastName     *string `json:"last_name" validate:"omitempty,min=2"`
     AvatarURL    *string `json:"avatar_url" validate:"omitempty,url"`
 }
+
+type RegisterReq struct {
+    Username  string `json:"username" validate:"required,min=3,max=32"`
+    Email     string `json:"email" validate:"required,email"`
+    Password  string `json:"password" validate:"required,min=6"`
+    FirstName string `json:"first_name" validate:"required,min=2"`
+    LastName  string `json:"last_name" validate:"required,min=2"`
+    AvatarURL string `json:"avatar_url" validate:"omitempty,url"`
+}
+
+type LoginReq struct {
+    Identifier string `json:"identifier" validate:"required"`
+    Password   string `json:"password" validate:"required"`
+}

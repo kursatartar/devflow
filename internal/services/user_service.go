@@ -6,6 +6,7 @@ import (
 	"devflow/internal/models"
 	"strings"
 	"time"
+    "golang.org/x/crypto/bcrypt"
 )
 
 type UserManager struct {
@@ -82,4 +83,34 @@ func (s *UserManager) UpdateUser(
 
 func (s *UserManager) DeleteUser(id string) error {
 	return s.repo.Delete(context.Background(), id)
+}
+
+// Auth
+func (s *UserManager) Register(username, email, password, firstName, lastName, avatarURL string) (*models.User, error) {
+    hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, err
+    }
+    return s.CreateUser("", username, email, string(hash), "user", firstName, lastName, avatarURL)
+}
+
+func (s *UserManager) Authenticate(identifier, password string) (*models.User, error) {
+    // try email first
+    var u *models.User
+    var err error
+    if strings.Contains(identifier, "@") {
+        u, err = s.repo.GetByEmail(context.Background(), identifier)
+    } else {
+        u, err = s.repo.GetByUsername(context.Background(), identifier)
+    }
+    if err != nil {
+        return nil, err
+    }
+    if u == nil {
+        return nil, ErrInvalidCredentials
+    }
+    if err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password)); err != nil {
+        return nil, ErrInvalidCredentials
+    }
+    return u, nil
 }
