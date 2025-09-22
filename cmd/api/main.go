@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	handlers2 "devflow/internal/presentation/api/handlers"
+	"devflow/internal/presentation/api/middleware"
 	"log"
+	"os"
 	"time"
 
 	"devflow/internal/config"
 	"devflow/internal/db"
-    repo "devflow/internal/persistence/mongodb/repositories"
+	repo "devflow/internal/persistence/mongodb/repositories"
 	"devflow/internal/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -41,6 +43,15 @@ func main() {
 	userRepo := repo.NewUserRepository(mongo.Database)
 	userSvc := services.NewUserService(userRepo)
 	handlers2.InitUserService(userSvc)
+
+	secretKey := os.Getenv("JWT_SECRET")
+	if secretKey == "" {
+		secretKey = "devflow-secret-key"
+	}
+	authSvc := services.NewAuthService(secretKey)
+	handlers2.InitAuthService(authSvc)
+
+	authMiddleware := middleware.NewAuthMiddleware(authSvc)
 
 	taskRepo := repo.NewTaskRepository(mongo.Database)
 	taskSvc := services.NewTaskService(taskRepo)
