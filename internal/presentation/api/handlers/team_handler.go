@@ -17,9 +17,9 @@ func CreateTeam(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-	if body.Name == "" || body.OwnerID == "" {
-		return responses.ValidationError(c, "missing required fields")
-	}
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
 
 	members := converters.ToDomainTeamMembers(body.Members)
 	settings := converters.ToDomainTeamSettings(body.Settings)
@@ -61,13 +61,16 @@ func GetTeam(c *fiber.Ctx) error {
 func UpdateTeam(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var body requests.UpdateTeamReq
+    var body requests.UpdateTeamReq
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
 	if len(c.Body()) == 0 {
 		return responses.ValidationError(c, "request body required")
 	}
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
 
 	domSettings := converters.ToDomainTeamSettingsPtr(body.Settings)
 
@@ -89,13 +92,13 @@ func UpdateTeam(c *fiber.Ctx) error {
 func AddTeamMember(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var body requests.AddMemberReq
+    var body requests.AddMemberReq
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-	if body.UserID == "" || body.Role == "" {
-		return responses.ValidationError(c, "missing required fields")
-	}
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
 
 	t, err := teamService.AddMember(id, body.UserID, body.Role)
 	if err != nil {

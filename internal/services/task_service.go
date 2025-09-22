@@ -11,8 +11,8 @@ type TaskManager struct {
 	repo interfaces.TaskRepository
 }
 
-func NewTaskService(repo interfaces.TaskRepository) interfaces.TaskService {
-	return &TaskManager{repo}
+func NewTaskService(repo interfaces.TaskRepository) *TaskManager {
+    return &TaskManager{repo}
 }
 
 func (t *TaskManager) CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) (*models.Task, error) {

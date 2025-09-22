@@ -16,7 +16,7 @@ func CreateUser(c *fiber.Ctx) error {
 		return responses.ValidationError(c, "invalid json")
 	}
     if err := validate.Struct(body); err != nil {
-        return responses.ValidationError(c, err.Error())
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 
 	u, err := userService.CreateUser(
@@ -64,7 +64,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		return responses.ValidationError(c, "invalid json")
 	}
     if err := validate.Struct(body); err != nil {
-        return responses.ValidationError(c, err.Error())
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 
 	if err := userService.UpdateUser(

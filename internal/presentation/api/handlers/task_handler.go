@@ -15,12 +15,12 @@ func CreateTask(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-	if body.Title == "" || body.ProjectID == "" || body.CreatedBy == "" || body.Status == "" || body.Priority == "" || body.DueDate == "" {
-		return responses.ValidationError(c, "missing required fields")
-	}
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
 
-	t, err := taskService.CreateTask(
-		"",
+    t, err := taskService.CreateTask(
+        "",
 		body.Title,
 		body.Description,
 		body.ProjectID,
@@ -30,8 +30,8 @@ func CreateTask(c *fiber.Ctx) error {
 		body.Priority,
 		body.DueDate,
 		body.Labels,
-		body.Estimated,
-		body.Logged,
+        body.TimeTracking.Estimated,
+        body.TimeTracking.Logged,
 	)
 	if err != nil {
 		switch {
@@ -62,6 +62,9 @@ func UpdateTask(c *fiber.Ctx) error {
 	if len(c.Body()) == 0 {
 		return responses.ValidationError(c, "request body required")
 	}
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    }
 
 	t, err := taskService.UpdateTask(
 		id,
@@ -70,9 +73,9 @@ func UpdateTask(c *fiber.Ctx) error {
 		body.Status,
 		body.Priority,
 		body.DueDate,
-		body.Labels,
-		body.Estimated,
-		body.Logged,
+        body.Labels,
+        func() *float64 { if body.TimeTracking!=nil { return body.TimeTracking.Estimated }; return nil }(),
+        func() *float64 { if body.TimeTracking!=nil { return body.TimeTracking.Logged }; return nil }(),
 	)
 	if err != nil {
 		switch {

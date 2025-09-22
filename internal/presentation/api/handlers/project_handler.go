@@ -16,7 +16,7 @@ func CreateProject(c *fiber.Ctx) error {
 		return responses.ValidationError(c, "invalid json")
 	}
     if err := validate.Struct(body); err != nil {
-        return responses.ValidationError(c, err.Error())
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 	p, err := projectService.CreateProject(
 		"",
@@ -51,7 +51,7 @@ func UpdateProject(c *fiber.Ctx) error {
 		return responses.ValidationError(c, "invalid json")
 	}
     if err := validate.Struct(body); err != nil {
-        return responses.ValidationError(c, err.Error())
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 	p, err := projectService.UpdateProject(
 		id,
@@ -94,7 +94,7 @@ func GetProject(c *fiber.Ctx) error {
 	}
     // Team bilgisini eklemek için teamService ile sorgula
     var teamResp *responses.TeamResponse
-    if p.TeamID != "" {
+    if p.TeamID != "" && teamService != nil {
         t, terr := teamService.GetTeam(p.TeamID)
         if terr == nil && t != nil {
             tr := converters.ToTeamResponse(t)
