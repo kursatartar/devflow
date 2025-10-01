@@ -5,6 +5,7 @@ import (
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
 	"time"
+	"github.com/google/uuid"
 )
 
 type TaskManager struct {
@@ -18,6 +19,9 @@ func NewTaskService(repo interfaces.TaskRepository) *TaskManager {
 func (t *TaskManager) CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) (*models.Task, error) {
 	if _, err := time.Parse(time.RFC3339, dueDate); err != nil {
 		return nil, ErrInvalidDueDate
+	}
+	if id == "" {
+		id = uuid.NewString()
 	}
 	task := models.NewTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate, labels, estimated, logged)
 	_, err := t.repo.Create(context.Background(), task)
@@ -33,15 +37,18 @@ func (t *TaskManager) UpdateTask(id string, title, description, status, priority
 			return nil, ErrInvalidDueDate
 		}
 	}
+	// First check if task exists
+	_, err := t.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	// Task exists, proceed with update
 	if err := t.repo.UpdateFields(context.Background(), id, title, description, status, priority, dueDate, labels, estimated, logged); err != nil {
 		return nil, err
 	}
 	out, err := t.repo.GetByID(context.Background(), id)
 	if err != nil {
 		return nil, err
-	}
-	if out == nil {
-		return nil, ErrTaskNotFound
 	}
 	return out, nil
 }

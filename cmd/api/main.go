@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	handlers2 "devflow/internal/presentation/api/handlers"
-	"devflow/internal/presentation/api/middleware"
 	"log"
 	"os"
 	"time"
@@ -51,8 +50,6 @@ func main() {
 	authSvc := services.NewAuthService(secretKey)
 	handlers2.InitAuthService(authSvc)
 
-	authMiddleware := middleware.NewAuthMiddleware(authSvc)
-
 	taskRepo := repo.NewTaskRepository(mongo.Database)
 	taskSvc := services.NewTaskService(taskRepo)
 	handlers2.InitTaskService(taskSvc)
@@ -64,7 +61,7 @@ func main() {
 	projectRepo := repo.NewProjectRepository(mongo.Database)
 	projectSvc := services.NewProjectService(projectRepo)
 	handlers2.InitProjectService(projectSvc)
-	
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			switch err {
@@ -82,9 +79,9 @@ func main() {
 
 	api := app.Group("/api")
 
-    auth := api.Group("/auth")
-    auth.Post("/register", handlers2.Register)
-    auth.Post("/login", handlers2.Login)
+	auth := api.Group("/auth")
+	auth.Post("/register", handlers2.Register)
+	auth.Post("/login", handlers2.Login)
 
 	users := api.Group("/users")
 	users.Post("/", handlers2.CreateUser)

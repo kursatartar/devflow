@@ -1,4 +1,4 @@
-{
+ {
 	"info": {
 		"_postman_id": "228f547f-43ba-4aa9-82b3-a557d5601f43",
 		"name": "DevFlow",
@@ -7,26 +7,94 @@
 	},
 	"item": [
 		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"kursatartar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password\": \"password123\",\n  \"first_name\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"kursatartar@example.com\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Users",
 			"item": [
 				{
 					"name": "List users",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/users",
+							"raw": "{{base_url}}/api/users",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"users"
@@ -39,13 +107,17 @@
 					"name": "Get user details",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/users/:id",
+							"raw": "{{base_url}}/api/users/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"users",
@@ -65,10 +137,19 @@
 					"name": "Update user",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"52ffeeff-8b07-4654-ba7d-b630049f11d1\",\n    \"username\": \"Kürşat\",\n    \"last_name\": \"Artar-updated\",\n    \"email\": \"dwnqwwwdw22qs@example.com\",\n    \"password_hash\": \"hawdsh\",\n    \"first_name\": \"kurswdwat\",\n    \"avatar_url\": \"https://example.wdwdcom/a.png\",\n    \"role\" : \"admin\"\n}",
+							"raw": "{\n  \"username\": \"Kürşat\",\n  \"last_name\": \"Artar-updated\",\n  \"email\": \"dwnqwwwdw22qs@example.com\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\",\n  \"role\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -76,15 +157,20 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/users/52ffeeff-8b07-4654-ba7d-b630049f11d1",
+							"raw": "{{base_url}}/api/users/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"users",
-								"52ffeeff-8b07-4654-ba7d-b630049f11d1"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "52ffeeff-8b07-4654-ba7d-b630049f11d1"
+								}
 							]
 						}
 					},
@@ -94,10 +180,19 @@
 					"name": "Create user",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password_hash\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\",\n  \"role\": \"admin\"\n}\n",
+							"raw": "{\n  \"username\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\",\n  \"role\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -105,11 +200,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/users",
+							"raw": "{{base_url}}/api/users",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"users"
@@ -122,21 +216,27 @@
 					"name": "Delete user",
 					"request": {
 						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/users/47b0c5a2-4cc4-42b1-ad46-8c6a1e6283f5",
+							"raw": "{{base_url}}/api/users/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"users",
-								"47b0c5a2-4cc4-42b1-ad46-8c6a1e6283f5"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "47b0c5a2-4cc4-42b1-ad46-8c6a1e6283f5"
+								}
 							]
 						}
 					},
@@ -151,13 +251,17 @@
 					"name": "List teams",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/teams",
+							"raw": "{{base_url}}/api/teams",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"teams"
@@ -170,17 +274,27 @@
 					"name": "Get team details",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/teams/28573e28-f479-44ed-9b88-3ac24932df4c",
+							"raw": "{{base_url}}/api/teams/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"teams",
-								"28573e28-f479-44ed-9b88-3ac24932df4c"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "28573e28-f479-44ed-9b88-3ac24932df4c"
+								}
 							]
 						}
 					},
@@ -190,10 +304,19 @@
 					"name": "Update team",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"product team\",\n  \"description\": \"devflow projesi için go fiber backend geliştirme\",\n  \"settings\": {\n    \"isPrivate\": true,\n    \"allowMemberInvite\": false\n  }\n}\n",
+							"raw": "{\n  \"name\": \"product team\",\n  \"description\": \"devflow projesi için go fiber backend geliştirme\",\n  \"settings\": {\n    \"isPrivate\": true,\n    \"allowMemberInvite\": false\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -201,11 +324,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/teams/:id",
+							"raw": "{{base_url}}/api/teams/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"teams",
@@ -225,10 +347,19 @@
 					"name": "Create team",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"devflow backend team\",\n  \"description\": \"go fiber \",\n  \"owner_id\": \"user-123\",\n  \"members\": [\n    {\n      \"user_id\": \"user-456\",\n      \"role\": \"developer\"\n    },\n    {\n      \"user_id\": \"user-789\",\n      \"role\": \"tester\"\n    }\n  ],\n  \"settings\": {\n    \"isPrivate\": false,\n    \"allowMemberInvite\": true\n  }\n}\n",
+							"raw": "{\n  \"name\": \"devflow backend team\",\n  \"description\": \"go fiber \",\n  \"owner_id\": \"user-123\",\n  \"members\": [\n    {\n      \"user_id\": \"user-456\",\n      \"role\": \"developer\"\n    },\n    {\n      \"user_id\": \"user-789\",\n      \"role\": \"tester\"\n    }\n  ],\n  \"settings\": {\n    \"isPrivate\": false,\n    \"allowMemberInvite\": true\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -236,11 +367,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/teams",
+							"raw": "{{base_url}}/api/teams",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"teams"
@@ -253,13 +383,17 @@
 					"name": "Delete team",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/teams/:id",
+							"raw": "{{base_url}}/api/teams/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"teams",
@@ -279,10 +413,19 @@
 					"name": "Add team member",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"user_id\": \"user-321\",\n  \"role\": \"backend\"\n}\n",
+							"raw": "{\n  \"user_id\": \"user-321\",\n  \"role\": \"backend\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -290,11 +433,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/teams/:id/members",
+							"raw": "{{base_url}}/api/teams/:id/members",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"teams",
@@ -312,22 +454,19 @@
 			"item": [
 				{
 					"name": "List tasks",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/tasks",
+							"raw": "{{base_url}}/api/tasks",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"tasks"
@@ -340,13 +479,17 @@
 					"name": "Get task details",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/tasks/:id",
+							"raw": "{{base_url}}/api/tasks/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"tasks",
@@ -366,10 +509,19 @@
 					"name": "Update tasks",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"devflow backend api v2\",\n  \"description\": \"product team için ek iş\",\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\",\n  \"labels\": [\"devflow\", \"product team\", \"backend\"],\n  \"due_date\": \"2025-09-15T12:00:00Z\",\n  \"estimated_hours\": 10,\n  \"logged_hours\": 3\n}\n",
+							"raw": "{\n  \"title\": \"devflow backend api v2\",\n  \"description\": \"product team için ek iş\",\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\",\n  \"labels\": [\"devflow\", \"product team\", \"backend\"],\n  \"due_date\": \"2025-09-15T12:00:00Z\",\n  \"time_tracking\": {\n    \"estimated_hours\": 10,\n    \"logged_hours\": 3\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -377,11 +529,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/tasks/:id",
+							"raw": "{{base_url}}/api/tasks/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"tasks",
@@ -401,10 +552,19 @@
 					"name": "Create task",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"devflow backend api\",\n  \"description\": \"go fiber task1\",\n  \"project_id\": \"proj-1234\",\n  \"assigned_to\": \"user-456\",\n  \"created_by\": \"user-123\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"labels\": [\"devflow\", \"go\", \"fiber\", \"backend\"],\n  \"due_date\": \"2025-09-10T09:00:00Z\",\n  \"estimated_hours\": 8,\n  \"logged_hours\": 1.5\n}\n",
+							"raw": "{\n  \"title\": \"devflow backend api\",\n  \"description\": \"go fiber task1\",\n  \"project_id\": \"proj-1234\",\n  \"assigned_to\": \"user-456\",\n  \"created_by\": \"user-123\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"labels\": [\"devflow\", \"go\", \"fiber\", \"backend\"],\n  \"due_date\": \"2025-09-10T09:00:00Z\",\n  \"time_tracking\": {\n    \"estimated_hours\": 8,\n    \"logged_hours\": 1.5\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -412,11 +572,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/tasks",
+							"raw": "{{base_url}}/api/tasks",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"tasks"
@@ -429,13 +588,17 @@
 					"name": "Delete task",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/tasks/:id",
+							"raw": "{{base_url}}/api/tasks/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"tasks",
@@ -458,22 +621,19 @@
 			"item": [
 				{
 					"name": "List projects",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/projects",
+							"raw": "{{base_url}}/api/projects",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"projects"
@@ -486,13 +646,17 @@
 					"name": "Get project details",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/projects/:id",
+							"raw": "{{base_url}}/api/projects/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"projects",
@@ -512,10 +676,19 @@
 					"name": "Update projects",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"devflow backend v2\",\n  \"description\": \"product team için ek işler\",\n  \"status\": \"on_hold\",\n  \"team_members\": [\"user-123\", \"user-456\"],\n  \"is_private\": true,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"review\", \"done\"]\n}\n",
+							"raw": "{\n  \"name\": \"devflow backend v2\",\n  \"description\": \"product team için ek işler\",\n  \"status\": \"on_hold\",\n  \"team_id\": \"team-123\",\n  \"is_private\": true,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"review\", \"done\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -523,11 +696,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/projects/:id",
+							"raw": "{{base_url}}/api/projects/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"projects",
@@ -547,10 +719,19 @@
 					"name": "Create project",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"devflow backend\",\n  \"description\": \"go fiber proje\",\n  \"owner_id\": \"user-123\",\n  \"status\": \"active\",\n  \"team_members\": [\"user-123\", \"user-456\", \"user-789\"],\n  \"is_private\": false,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"done\"]\n}\n",
+							"raw": "{\n  \"name\": \"devflow backend\",\n  \"description\": \"go fiber proje\",\n  \"owner_id\": \"user-123\",\n  \"team_id\": \"team-456\",\n  \"status\": \"active\",\n  \"is_private\": false,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"done\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -558,11 +739,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/projects",
+							"raw": "{{base_url}}/api/projects",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"projects"
@@ -575,13 +755,17 @@
 					"name": "Delete project",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
 						"url": {
-							"raw": "localhost:8080/api/projects/:id",
+							"raw": "{{base_url}}/api/projects/:id",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"projects",

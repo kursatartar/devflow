@@ -9,4 +9,6 @@ type UserService interface {
 	DeleteUser(id string) error
 	FilterUsersByRole(role string) []*models.User
 	GetUser(id string) (*models.User, error)
+	Register(username, email, password, firstName, lastName, avatarURL string) (*models.User, error)
+	Authenticate(identifier, password string) (*models.User, error)
 }

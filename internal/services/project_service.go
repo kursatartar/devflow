@@ -4,6 +4,7 @@ import (
 	"context"
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
+	"github.com/google/uuid"
 )
 
 type ProjectManager struct {
@@ -15,6 +16,9 @@ func NewProjectService(repo interfaces.ProjectRepository) *ProjectManager {
 }
 
 func (p *ProjectManager) CreateProject(id, name, description, ownerID, teamID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+	if id == "" {
+		id = uuid.NewString()
+	}
     pr := models.NewProject(id, name, description, ownerID, teamID, teamMembers, status, isPrivate, taskWorkflow)
 	_, err := p.repo.Create(context.Background(), pr)
 	if err != nil {
@@ -45,6 +49,11 @@ func (p *ProjectManager) FilterProjectsByOwner(ownerID string) []*models.Project
 }
 
 func (p *ProjectManager) UpdateProject(id string, name string, description string, status string, teamID string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+	_, err := p.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	
 	namePtr := &name
 	descPtr := &description
 	statusPtr := &status
@@ -60,13 +69,17 @@ func (p *ProjectManager) UpdateProject(id string, name string, description strin
 	if err != nil {
 		return nil, err
 	}
-	if out == nil {
-		return nil, ErrProjectNotFound
-	}
 	return out, nil
 }
 
 func (p *ProjectManager) DeleteProject(id string) error {
+	if id == "" {
+		return ErrProjectNotFound
+	}
+	_, err := p.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return err
+	}
 	return p.repo.Delete(context.Background(), id)
 }
 

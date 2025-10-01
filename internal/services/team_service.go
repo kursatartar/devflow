@@ -4,6 +4,7 @@ import (
 	"context"
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
+	"github.com/google/uuid"
 )
 
 type TeamManager struct {
@@ -11,7 +12,7 @@ type TeamManager struct {
 }
 
 func NewTeamService(repo interfaces.TeamRepository) *TeamManager {
-    return &TeamManager{repo}
+	return &TeamManager{repo}
 }
 
 func (t *TeamManager) CreateTeam(
@@ -19,6 +20,9 @@ func (t *TeamManager) CreateTeam(
 	members []models.TeamMember,
 	settings models.TeamSettings,
 ) (*models.Team, error) {
+	if id == "" {
+		id = uuid.NewString()
+	}
 	team := models.NewTeam(id, name, description, ownerID, members, settings)
 	_, err := t.repo.Create(context.Background(), team)
 	if err != nil {
@@ -33,6 +37,9 @@ func (t *TeamManager) ListTeams() []*models.Team {
 }
 
 func (t *TeamManager) GetTeam(id string) (*models.Team, error) {
+	if id == "" {
+		return nil, ErrTeamNotFound
+	}
 	out, err := t.repo.GetByID(context.Background(), id)
 	if err != nil {
 		return nil, err
@@ -48,15 +55,16 @@ func (t *TeamManager) UpdateTeam(
 	name, description *string,
 	settings *models.TeamSettings,
 ) (*models.Team, error) {
+	_, err := t.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
 	if err := t.repo.UpdateFields(context.Background(), id, name, description, settings); err != nil {
 		return nil, err
 	}
 	out, err := t.repo.GetByID(context.Background(), id)
 	if err != nil {
 		return nil, err
-	}
-	if out == nil {
-		return nil, ErrTeamNotFound
 	}
 	return out, nil
 }

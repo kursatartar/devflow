@@ -40,7 +40,7 @@ func (r *ProjectRepository) Create(ctx context.Context, p *models.Project) (stri
 
 func (r *ProjectRepository) GetByID(ctx context.Context, id string) (*models.Project, error) {
     var out entities.ProjectEntity
-    err := r.col.FindOne(ctx, bson.M{"id": id}).Decode(&out)
+    err := r.col.FindOne(ctx, bson.M{"_id": id}).Decode(&out)
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
@@ -104,12 +104,12 @@ func (r *ProjectRepository) UpdateFields(ctx context.Context, id string, name, d
     if teamID != nil {
         set["team_id"] = *teamID
     }
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": id}, bson.M{"$set": set})
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": set})
     return err
 }
 
 func (r *ProjectRepository) Delete(ctx context.Context, id string) error {
-    _, err := r.col.DeleteOne(ctx, bson.M{"id": id})
+    _, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
     return err
 }
 

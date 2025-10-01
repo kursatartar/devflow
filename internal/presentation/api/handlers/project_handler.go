@@ -74,6 +74,9 @@ func UpdateProject(c *fiber.Ctx) error {
 
 func DeleteProject(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "project not found")
+	}
 	if err := projectService.DeleteProject(id); err != nil {
 		if errors.Is(err, services.ErrProjectNotFound) {
 			return responses.NotFound(c, "project not found")

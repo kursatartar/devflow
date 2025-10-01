@@ -11,7 +11,7 @@ type TimeTrackingEntity struct {
 }
 
 type TaskEntity struct {
-    ID           string             `bson:"id"`
+    ID           string             `bson:"_id"`
     Title        string             `bson:"title"`
     Description  string             `bson:"description"`
     ProjectID    string             `bson:"project_id"`

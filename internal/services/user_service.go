@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
     "golang.org/x/crypto/bcrypt"
+    "github.com/google/uuid"
 )
 
 type UserManager struct {
@@ -24,6 +25,12 @@ func NewUserService(repo interfaces.UserRepository) *UserManager {
 
 func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) (*models.User, error) {
 	now := time.Now()
+	
+	// Generate UUID if ID is empty
+	if id == "" {
+		id = uuid.NewString()
+	}
+	
 	u := &models.User{
 		ID:           id,
 		Username:     username,
@@ -50,7 +57,14 @@ func (s *UserManager) ListUsers() []*models.User {
 }
 
 func (s *UserManager) GetUser(id string) (*models.User, error) {
-	return s.repo.GetByID(context.Background(), id)
+	user, err := s.repo.GetByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+	return user, nil
 }
 
 func (s *UserManager) UpdateUser(

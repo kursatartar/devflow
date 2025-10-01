@@ -17,7 +17,7 @@ type TeamResponse struct {
 	ID          string               `json:"id"`
 	Name        string               `json:"name"`
 	Description string               `json:"description"`
-	OwnerID     string               `json:"ownerId"`
+	OwnerID     string               `json:"owner_id"`
 	Members     []TeamMemberResponse `json:"members"`
 	Settings    TeamSettingsResponse `json:"settings"`
 	CreatedAt   time.Time            `json:"created_at"`

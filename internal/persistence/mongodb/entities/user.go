@@ -12,7 +12,7 @@ type ProfileEntity struct {
 }
 
 type UserEntity struct {
-    ID           string        `bson:"id"`
+    ID           string        `bson:"_id"`
     Username     string        `bson:"username"`
     Email        string        `bson:"email"`
     PasswordHash string        `bson:"password_hash"`

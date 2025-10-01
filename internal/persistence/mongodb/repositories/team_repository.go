@@ -38,8 +38,11 @@ func (r *TeamRepository) Create(ctx context.Context, t *models.Team) (string, er
 }
 
 func (r *TeamRepository) GetByID(ctx context.Context, id string) (*models.Team, error) {
+    if id == "" {
+        return nil, nil
+    }
     var out entities.TeamEntity
-    err := r.col.FindOne(ctx, bson.M{"id": id}).Decode(&out)
+    err := r.col.FindOne(ctx, bson.M{"_id": id}).Decode(&out)
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
@@ -74,33 +77,33 @@ func (r *TeamRepository) UpdateFields(ctx context.Context, id string, name, desc
     if settings != nil {
         set["settings"] = bson.M{"is_private": settings.IsPrivate, "allow_member_invite": settings.AllowMemberInvite}
     }
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": id}, bson.M{"$set": set})
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": set})
     return err
 }
 
 func (r *TeamRepository) AddMember(ctx context.Context, teamID, userID, role string) error {
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": teamID},
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": teamID},
         bson.M{"$push": bson.M{"members": bson.M{"user_id": userID, "role": role, "joined_at": time.Now()}}, "$set": bson.M{"updated_at": time.Now()}},
     )
     return err
 }
 
 func (r *TeamRepository) RemoveMember(ctx context.Context, teamID, userID string) error {
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": teamID},
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": teamID},
         bson.M{"$pull": bson.M{"members": bson.M{"user_id": userID}}, "$set": bson.M{"updated_at": time.Now()}},
     )
     return err
 }
 
 func (r *TeamRepository) ChangeMemberRole(ctx context.Context, teamID, userID, role string) error {
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": teamID, "members.user_id": userID},
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": teamID, "members.user_id": userID},
         bson.M{"$set": bson.M{"members.$.role": role, "updated_at": time.Now()}},
     )
     return err
 }
 
 func (r *TeamRepository) Delete(ctx context.Context, id string) error {
-    _, err := r.col.DeleteOne(ctx, bson.M{"id": id})
+    _, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
     return err
 }
 

@@ -67,6 +67,16 @@ func UpdateUser(c *fiber.Ctx) error {
         return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 
+	// First check if user exists
+	_, err := userService.GetUser(id)
+	if err != nil {
+		if errors.Is(err, services.ErrUserNotFound) {
+			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
+		}
+		return responses.Internal(c, err)
+	}
+
+	
 	if err := userService.UpdateUser(
 		id,
 		body.Username,
@@ -78,8 +88,6 @@ func UpdateUser(c *fiber.Ctx) error {
 		body.AvatarURL,
 	); err != nil {
 		switch {
-		case errors.Is(err, services.ErrUserNotFound):
-			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
 		case errors.Is(err, services.ErrEmailExists):
 			return responses.Conflict(c, "email already exists")
 		case errors.Is(err, services.ErrInvalidEmail):
@@ -98,7 +106,7 @@ func UpdateUser(c *fiber.Ctx) error {
 }
 
 func DeleteUser(c *fiber.Ctx) error {
-	id := c.Params("_id")
+	id := c.Params("id")
 	if err := userService.DeleteUser(id); err != nil {
 
 		if errors.Is(err, services.ErrUserNotFound) {
@@ -110,7 +118,7 @@ func DeleteUser(c *fiber.Ctx) error {
 }
 
 func GetUser(c *fiber.Ctx) error {
-	id := c.Params("_id")
+	id := c.Params("id")
 	u, err := userService.GetUser(id)
 	if err != nil {
 		if errors.Is(err, services.ErrUserNotFound) {

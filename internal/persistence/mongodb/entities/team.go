@@ -17,7 +17,7 @@ type TeamSettingsEntity struct {
 }
 
 type TeamEntity struct {
-    ID          string              `bson:"id"`
+    ID          string              `bson:"_id"`
     Name        string              `bson:"name"`
     Description string              `bson:"description"`
     OwnerID     string              `bson:"owner_id"`

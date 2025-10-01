@@ -39,7 +39,7 @@ func (r *TaskRepository) Create(ctx context.Context, t *models.Task) (string, er
 
 func (r *TaskRepository) GetByID(ctx context.Context, id string) (*models.Task, error) {
     var out entities.TaskEntity
-    err := r.col.FindOne(ctx, bson.M{"id": id}).Decode(&out)
+    err := r.col.FindOne(ctx, bson.M{"_id": id}).Decode(&out)
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
@@ -106,12 +106,12 @@ func (r *TaskRepository) UpdateFields(ctx context.Context, id string, title, des
     if logged != nil {
         set["time_tracking.logged_hours"] = *logged
     }
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": id}, bson.M{"$set": set})
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": set})
     return err
 }
 
 func (r *TaskRepository) Delete(ctx context.Context, id string) error {
-    _, err := r.col.DeleteOne(ctx, bson.M{"id": id})
+    _, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
     return err
 }
 

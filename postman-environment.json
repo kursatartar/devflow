@@ -1,0 +1,17 @@
+{
+	"id": "devflow-environment",
+	"name": "DevFlow Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"enabled": true
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment"
+}

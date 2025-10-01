@@ -39,7 +39,7 @@ func (r *UserRepository) Create(ctx context.Context, u *models.User) (string, er
 
 func (r *UserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
     var out entities.UserEntity
-    err := r.col.FindOne(ctx, bson.M{"id": id}).Decode(&out)
+    err := r.col.FindOne(ctx, bson.M{"_id": id}).Decode(&out)
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
@@ -101,15 +101,17 @@ func (r *UserRepository) FilterByRole(ctx context.Context, role string) ([]*mode
 }
 
 func (r *UserRepository) UpdateProfile(ctx context.Context, id string, p models.Profile) error {
-    _, err := r.col.UpdateOne(ctx,
-        bson.M{"id": id},
-        bson.M{"$set": bson.M{
-            "profile.first_name": p.FirstName,
-            "profile.last_name":  p.LastName,
-            "profile.avatar_url": p.AvatarURL,
-            "updated_at":         time.Now(),
-        }},
-    )
+    set := bson.M{"updated_at": time.Now()}
+    if p.FirstName != "" {
+        set["profile.first_name"] = p.FirstName
+    }
+    if p.LastName != "" {
+        set["profile.last_name"] = p.LastName
+    }
+    if p.AvatarURL != "" {
+        set["profile.avatar_url"] = p.AvatarURL
+    }
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": set})
     return err
 }
 
@@ -127,12 +129,12 @@ func (r *UserRepository) UpdateCore(ctx context.Context, id, username, email, pa
     if role != "" {
         set["role"] = role
     }
-    _, err := r.col.UpdateOne(ctx, bson.M{"id": id}, bson.M{"$set": set})
+    _, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": set})
     return err
 }
 
 func (r *UserRepository) Delete(ctx context.Context, id string) error {
-    _, err := r.col.DeleteOne(ctx, bson.M{"id": id})
+    _, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
     return err
 }
 
