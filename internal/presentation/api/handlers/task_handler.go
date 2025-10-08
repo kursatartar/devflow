@@ -54,6 +54,9 @@ func ListTasks(c *fiber.Ctx) error {
 
 func UpdateTask(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "task not found")
+	}
 
 	var body requests.UpdateTaskReq
 	if err := c.BodyParser(&body); err != nil {
@@ -93,6 +96,9 @@ func UpdateTask(c *fiber.Ctx) error {
 
 func DeleteTask(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "task not found")
+	}
 	if err := taskService.DeleteTask(id); err != nil {
 		if errors.Is(err, services.ErrTaskNotFound) {
 			return responses.NotFound(c, "task not found")

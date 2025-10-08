@@ -26,7 +26,7 @@ type TaskEntity struct {
     UpdatedAt    time.Time          `bson:"updated_at"`
 }
 
-func TaskFromModel(m *models.Task) *TaskEntity {
+func FromDomainTask(m *models.Task) *TaskEntity {
     if m == nil {
         return nil
     }
@@ -50,7 +50,7 @@ func TaskFromModel(m *models.Task) *TaskEntity {
     }
 }
 
-func (e *TaskEntity) ToModel() *models.Task {
+func (e *TaskEntity) ToDomainTask() *models.Task {
     if e == nil {
         return nil
     }

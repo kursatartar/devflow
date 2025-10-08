@@ -16,14 +16,13 @@ type ProjectEntity struct {
     Description string                 `bson:"description"`
     OwnerID     string                 `bson:"owner_id"`
     TeamID      string                 `bson:"team_id"`
-    TeamMembers []string               `bson:"team_members"`
     Status      string                 `bson:"status"`
     Settings    ProjectSettingsEntity  `bson:"settings"`
     CreatedAt   time.Time              `bson:"created_at"`
     UpdatedAt   time.Time              `bson:"updated_at"`
 }
 
-func ProjectFromModel(m *models.Project) *ProjectEntity {
+func FromDomainProject(m *models.Project) *ProjectEntity {
     if m == nil {
         return nil
     }
@@ -33,7 +32,6 @@ func ProjectFromModel(m *models.Project) *ProjectEntity {
         Description: m.Description,
         OwnerID:     m.OwnerID,
         TeamID:      m.TeamID,
-        TeamMembers: m.TeamMembers,
         Status:      m.Status,
         Settings: ProjectSettingsEntity{
             IsPrivate:    m.Settings.IsPrivate,
@@ -44,7 +42,7 @@ func ProjectFromModel(m *models.Project) *ProjectEntity {
     }
 }
 
-func (e *ProjectEntity) ToModel() *models.Project {
+func (e *ProjectEntity) ToDomainProject() *models.Project {
     if e == nil {
         return nil
     }
@@ -54,7 +52,6 @@ func (e *ProjectEntity) ToModel() *models.Project {
         Description: e.Description,
         OwnerID:     e.OwnerID,
         TeamID:      e.TeamID,
-        TeamMembers: e.TeamMembers,
         Status:      e.Status,
         Settings: models.ProjectSettings{
             IsPrivate:    e.Settings.IsPrivate,

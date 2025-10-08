@@ -30,7 +30,7 @@ func (r *UserRepository) Create(ctx context.Context, u *models.User) (string, er
         u.CreatedAt = now
     }
     u.UpdatedAt = now
-    _, err := r.col.InsertOne(ctx, entities.UserFromModel(u))
+    _, err := r.col.InsertOne(ctx, entities.FromDomainUser(u))
     if err != nil {
         return "", err
     }
@@ -43,7 +43,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id string) (*models.User, 
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
-    return out.ToModel(), err
+    return out.ToDomainUser(), err
 }
 
 func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) {
@@ -52,7 +52,7 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*m
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
-    return out.ToModel(), err
+    return out.ToDomainUser(), err
 }
 
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
@@ -61,7 +61,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*models.
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
-    return out.ToModel(), err
+    return out.ToDomainUser(), err
 }
 
 func (r *UserRepository) List(ctx context.Context) ([]*models.User, error) {
@@ -78,7 +78,7 @@ func (r *UserRepository) List(ctx context.Context) ([]*models.User, error) {
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainUser())
     }
     return out, cur.Err()
 }
@@ -95,7 +95,7 @@ func (r *UserRepository) FilterByRole(ctx context.Context, role string) ([]*mode
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainUser())
     }
     return out, cur.Err()
 }

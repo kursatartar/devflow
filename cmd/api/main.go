@@ -1,32 +1,21 @@
 package main
 
 import (
-	"context"
-	handlers2 "devflow/internal/presentation/api/handlers"
-	"log"
-	"os"
-	"time"
+    "context"
+    handlers2 "devflow/internal/presentation/api/handlers"
+    "log"
+    "os"
 
-	"devflow/internal/config"
-	"devflow/internal/db"
-	repo "devflow/internal/persistence/mongodb/repositories"
-	"devflow/internal/services"
+    "devflow/internal/config"
+    "devflow/internal/db"
+    repo "devflow/internal/persistence/mongodb/repositories"
+    "devflow/internal/services"
 
-	"github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v2"
 )
 
 func main() {
 	cfg := config.LoadConfig()
-
-	if cfg.Database.DBName == "" {
-		cfg.Database.DBName = "devflow"
-	}
-	if cfg.Database.MaxPool == 0 {
-		cfg.Database.MaxPool = 10
-	}
-	if cfg.Database.Timeout == 0 {
-		cfg.Database.Timeout = 10 * time.Second
-	}
 
 	mongo, err := db.NewMongo(
 		cfg.Database.MongoURI,

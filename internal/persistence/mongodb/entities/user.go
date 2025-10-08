@@ -22,7 +22,7 @@ type UserEntity struct {
     UpdatedAt    time.Time     `bson:"updated_at"`
 }
 
-func UserFromModel(m *models.User) *UserEntity {
+func FromDomainUser(m *models.User) *UserEntity {
     if m == nil {
         return nil
     }
@@ -42,7 +42,7 @@ func UserFromModel(m *models.User) *UserEntity {
     }
 }
 
-func (e *UserEntity) ToModel() *models.User {
+func (e *UserEntity) ToDomainUser() *models.User {
     if e == nil {
         return nil
     }

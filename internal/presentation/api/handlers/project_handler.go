@@ -43,6 +43,9 @@ func ListProjects(c *fiber.Ctx) error {
 
 func UpdateProject(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "project not found")
+	}
 	if len(c.Body()) == 0 {
 		return responses.ValidationError(c, "request body required")
 	}

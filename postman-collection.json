@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"kursatartar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password\": \"password123\",\n  \"first_name\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"role\": \"admin\"\n}",
+							"raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"avatar_url\": \"https://example.com/avatar.png\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -54,7 +54,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"kursatartar@example.com\",\n  \"password\": \"password123\"\n}",
+							"raw": "{\n  \"identifier\": \"kursat@example.com\",\n  \"password\": \"password123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -149,7 +149,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"Kürşat\",\n  \"last_name\": \"Artar-updated\",\n  \"email\": \"dwnqwwwdw22qs@example.com\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\",\n  \"role\": \"admin\"\n}",
+							"raw": "{\n  \"username\": \"john_doe_updated\",\n  \"email\": \"john.updated@example.com\",\n  \"password_hash\": \"newpassword123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"role\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -192,7 +192,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"email\": \"kursatartar@example.com\",\n  \"password\": \"hawdsh\",\n  \"first_name\": \"kurswdwat\",\n  \"avatar_url\": \"https://example.wdwdcom/a.png\",\n  \"role\": \"admin\"\n}",
+							"raw": "{\n  \"username\": \"jane_smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"password_hash\": \"password123\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"role\": \"user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -316,7 +316,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"product team\",\n  \"description\": \"devflow projesi için go fiber backend geliştirme\",\n  \"settings\": {\n    \"isPrivate\": true,\n    \"allowMemberInvite\": false\n  }\n}",
+							"raw": "{\n  \"name\": \"Product Team Updated\",\n  \"description\": \"Updated product development and management team\",\n  \"settings\": {\n    \"is_private\": false,\n    \"allow_member_invite\": true\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -359,7 +359,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"devflow backend team\",\n  \"description\": \"go fiber \",\n  \"owner_id\": \"user-123\",\n  \"members\": [\n    {\n      \"user_id\": \"user-456\",\n      \"role\": \"developer\"\n    },\n    {\n      \"user_id\": \"user-789\",\n      \"role\": \"tester\"\n    }\n  ],\n  \"settings\": {\n    \"isPrivate\": false,\n    \"allowMemberInvite\": true\n  }\n}",
+							"raw": "{\n  \"name\": \"Backend Development Team\",\n  \"description\": \"Go Fiber backend development team\",\n  \"owner_id\": \"507f1f77bcf86cd799439011\",\n  \"members\": [\n    {\n      \"user_id\": \"507f1f77bcf86cd799439012\",\n      \"role\": \"member\"\n    },\n    {\n      \"user_id\": \"507f1f77bcf86cd799439013\",\n      \"role\": \"viewer\"\n    }\n  ],\n  \"settings\": {\n    \"is_private\": false,\n    \"allow_member_invite\": true\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -425,7 +425,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"user_id\": \"user-321\",\n  \"role\": \"backend\"\n}",
+							"raw": "{\n  \"user_id\": \"507f1f77bcf86cd799439014\",\n  \"role\": \"member\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -521,7 +521,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"devflow backend api v2\",\n  \"description\": \"product team için ek iş\",\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\",\n  \"labels\": [\"devflow\", \"product team\", \"backend\"],\n  \"due_date\": \"2025-09-15T12:00:00Z\",\n  \"time_tracking\": {\n    \"estimated_hours\": 10,\n    \"logged_hours\": 3\n  }\n}",
+							"raw": "{\n  \"title\": \"API Enhancement Task\",\n  \"description\": \"Enhanced backend API development\",\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\",\n  \"labels\": [\"api\", \"backend\", \"enhancement\"],\n  \"due_date\": \"2025-09-15T12:00:00Z\",\n  \"time_tracking\": {\n    \"estimated_hours\": 10,\n    \"logged_hours\": 3\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -564,7 +564,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"devflow backend api\",\n  \"description\": \"go fiber task1\",\n  \"project_id\": \"proj-1234\",\n  \"assigned_to\": \"user-456\",\n  \"created_by\": \"user-123\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"labels\": [\"devflow\", \"go\", \"fiber\", \"backend\"],\n  \"due_date\": \"2025-09-10T09:00:00Z\",\n  \"time_tracking\": {\n    \"estimated_hours\": 8,\n    \"logged_hours\": 1.5\n  }\n}",
+							"raw": "{\n  \"title\": \"Backend API Development\",\n  \"description\": \"Go Fiber backend development task\",\n  \"project_id\": \"507f1f77bcf86cd799439015\",\n  \"assigned_to\": \"507f1f77bcf86cd799439016\",\n  \"created_by\": \"507f1f77bcf86cd799439017\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"labels\": [\"api\", \"go\", \"fiber\", \"backend\"],\n  \"due_date\": \"2025-09-10T09:00:00Z\",\n  \"time_tracking\": {\n    \"estimated_hours\": 8,\n    \"logged_hours\": 1.5\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -688,7 +688,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"devflow backend v2\",\n  \"description\": \"product team için ek işler\",\n  \"status\": \"on_hold\",\n  \"team_id\": \"team-123\",\n  \"is_private\": true,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"review\", \"done\"]\n}",
+							"raw": "{\n  \"name\": \"Backend Project v2\",\n  \"description\": \"Enhanced backend project for product team\",\n  \"status\": \"on_hold\",\n  \"team_id\": \"507f1f77bcf86cd799439022\",\n  \"team_members\": [\"507f1f77bcf86cd799439023\", \"507f1f77bcf86cd799439024\"],\n  \"is_private\": true,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"review\", \"done\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -731,7 +731,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"devflow backend\",\n  \"description\": \"go fiber proje\",\n  \"owner_id\": \"user-123\",\n  \"team_id\": \"team-456\",\n  \"status\": \"active\",\n  \"is_private\": false,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"done\"]\n}",
+							"raw": "{\n  \"name\": \"Backend Project\",\n  \"description\": \"Go Fiber backend project\",\n  \"owner_id\": \"507f1f77bcf86cd799439018\",\n  \"team_id\": \"507f1f77bcf86cd799439019\",\n  \"status\": \"active\",\n  \"team_members\": [\"507f1f77bcf86cd799439020\", \"507f1f77bcf86cd799439021\"],\n  \"is_private\": false,\n  \"task_workflow\": [\"todo\", \"in_progress\", \"done\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

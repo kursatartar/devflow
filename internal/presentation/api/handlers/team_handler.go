@@ -10,6 +10,7 @@ import (
 	"devflow/internal/presentation/api/requests"
 	"devflow/internal/presentation/api/responses"
 	"devflow/internal/services"
+	"devflow/utils"
 )
 
 func CreateTeam(c *fiber.Ctx) error {
@@ -17,8 +18,8 @@ func CreateTeam(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    if err := utils.Validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": utils.BuildValidationCauses(err)})
     }
 
 	members := converters.ToDomainTeamMembers(body.Members)
@@ -60,6 +61,9 @@ func GetTeam(c *fiber.Ctx) error {
 
 func UpdateTeam(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "team not found")
+	}
 
     var body requests.UpdateTeamReq
 	if err := c.BodyParser(&body); err != nil {
@@ -96,8 +100,8 @@ func AddTeamMember(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+    if err := utils.Validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": utils.BuildValidationCauses(err)})
     }
 
 	t, err := teamService.AddMember(id, body.UserID, body.Role)
@@ -112,6 +116,9 @@ func AddTeamMember(c *fiber.Ctx) error {
 
 func DeleteTeam(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "team not found")
+	}
 	if err := teamService.DeleteTeam(id); err != nil {
 		if errors.Is(err, services.ErrTeamNotFound) {
 			return responses.NotFound(c, fmt.Sprintf("team %s not found", id))

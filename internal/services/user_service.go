@@ -1,13 +1,11 @@
 package services
 
 import (
-	"context"
-	"devflow/internal/interfaces"
-	"devflow/internal/models"
-	"strings"
-	"time"
+    "context"
+    "devflow/internal/interfaces"
+    "devflow/internal/models"
+    "strings"
     "golang.org/x/crypto/bcrypt"
-    "github.com/google/uuid"
 )
 
 type UserManager struct {
@@ -24,31 +22,21 @@ func NewUserService(repo interfaces.UserRepository) *UserManager {
 }
 
 func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) (*models.User, error) {
-	now := time.Now()
-	
-	// Generate UUID if ID is empty
-	if id == "" {
-		id = uuid.NewString()
-	}
-	
-	u := &models.User{
-		ID:           id,
-		Username:     username,
-		Email:        email,
-		PasswordHash: passwordHash,
-		Role:         role,
-		Profile:      models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL},
-		CreatedAt:    now,
-		UpdatedAt:    now,
-	}
-
-	if !strings.Contains(u.Email, "@") {
-		return nil, ErrInvalidEmail
-	}
-	if _, err := s.repo.Create(context.Background(), u); err != nil {
-		return nil, err
-	}
-	return u, nil
+    profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
+    u, err := models.NewUser(id, username, email, passwordHash, role, profile)
+    if err != nil {
+        return nil, err
+    }
+    if ok, err := u.IsEmailValid(); err != nil || !ok {
+        if err != nil {
+            return nil, err
+        }
+        return nil, ErrInvalidEmail
+    }
+    if _, err := s.repo.Create(context.Background(), u); err != nil {
+        return nil, err
+    }
+    return u, nil
 }
 
 func (s *UserManager) ListUsers() []*models.User {

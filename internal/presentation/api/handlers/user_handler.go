@@ -107,8 +107,10 @@ func UpdateUser(c *fiber.Ctx) error {
 
 func DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return responses.NotFound(c, "user not found")
+	}
 	if err := userService.DeleteUser(id); err != nil {
-
 		if errors.Is(err, services.ErrUserNotFound) {
 			return responses.NotFound(c, fmt.Sprintf("user %s not found", id))
 		}

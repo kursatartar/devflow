@@ -30,7 +30,7 @@ func (r *TaskRepository) Create(ctx context.Context, t *models.Task) (string, er
         t.CreatedAt = now
     }
     t.UpdatedAt = now
-    _, err := r.col.InsertOne(ctx, entities.TaskFromModel(t))
+    _, err := r.col.InsertOne(ctx, entities.FromDomainTask(t))
     if err != nil {
         return "", err
     }
@@ -43,7 +43,7 @@ func (r *TaskRepository) GetByID(ctx context.Context, id string) (*models.Task, 
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
-    return out.ToModel(), err
+    return out.ToDomainTask(), err
 }
 
 func (r *TaskRepository) List(ctx context.Context) ([]*models.Task, error) {
@@ -58,7 +58,7 @@ func (r *TaskRepository) List(ctx context.Context) ([]*models.Task, error) {
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainTask())
     }
     return out, cur.Err()
 }
@@ -75,7 +75,7 @@ func (r *TaskRepository) FilterByProject(ctx context.Context, projectID string) 
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainTask())
     }
     return out, cur.Err()
 }

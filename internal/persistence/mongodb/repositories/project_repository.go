@@ -30,7 +30,7 @@ func (r *ProjectRepository) Create(ctx context.Context, p *models.Project) (stri
         p.CreatedAt = now
     }
     p.UpdatedAt = now
-    e := entities.ProjectFromModel(p)
+    e := entities.FromDomainProject(p)
     _, err := r.col.InsertOne(ctx, e)
     if err != nil {
         return "", err
@@ -44,7 +44,7 @@ func (r *ProjectRepository) GetByID(ctx context.Context, id string) (*models.Pro
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
-    return out.ToModel(), err
+    return out.ToDomainProject(), err
 }
 
 func (r *ProjectRepository) List(ctx context.Context) ([]*models.Project, error) {
@@ -59,7 +59,7 @@ func (r *ProjectRepository) List(ctx context.Context) ([]*models.Project, error)
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainProject())
     }
     return out, cur.Err()
 }
@@ -76,7 +76,7 @@ func (r *ProjectRepository) FilterByOwner(ctx context.Context, ownerID string) (
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainProject())
     }
     return out, cur.Err()
 }

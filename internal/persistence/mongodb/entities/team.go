@@ -27,7 +27,7 @@ type TeamEntity struct {
     UpdatedAt   time.Time           `bson:"updated_at"`
 }
 
-func TeamFromModel(m *models.Team) *TeamEntity {
+func FromDomainTeam(m *models.Team) *TeamEntity {
     if m == nil {
         return nil
     }
@@ -50,7 +50,7 @@ func TeamFromModel(m *models.Team) *TeamEntity {
     }
 }
 
-func (e *TeamEntity) ToModel() *models.Team {
+func (e *TeamEntity) ToDomainTeam() *models.Team {
     if e == nil {
         return nil
     }

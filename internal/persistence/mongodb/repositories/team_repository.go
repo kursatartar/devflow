@@ -30,7 +30,7 @@ func (r *TeamRepository) Create(ctx context.Context, t *models.Team) (string, er
         t.CreatedAt = now
     }
     t.UpdatedAt = now
-    _, err := r.col.InsertOne(ctx, entities.TeamFromModel(t))
+    _, err := r.col.InsertOne(ctx, entities.FromDomainTeam(t))
     if err != nil {
         return "", err
     }
@@ -46,7 +46,7 @@ func (r *TeamRepository) GetByID(ctx context.Context, id string) (*models.Team, 
     if errors.Is(err, mongo.ErrNoDocuments) {
         return nil, nil
     }
-    return out.ToModel(), err
+    return out.ToDomainTeam(), err
 }
 
 func (r *TeamRepository) List(ctx context.Context) ([]*models.Team, error) {
@@ -61,7 +61,7 @@ func (r *TeamRepository) List(ctx context.Context) ([]*models.Team, error) {
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainTeam())
     }
     return out, cur.Err()
 }
@@ -119,7 +119,7 @@ func (r *TeamRepository) FilterByOwner(ctx context.Context, ownerID string) ([]*
         if err := cur.Decode(&e); err != nil {
             return nil, err
         }
-        out = append(out, e.ToModel())
+        out = append(out, e.ToDomainTeam())
     }
     return out, cur.Err()
 }

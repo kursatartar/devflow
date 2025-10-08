@@ -37,12 +37,10 @@ func (t *TaskManager) UpdateTask(id string, title, description, status, priority
 			return nil, ErrInvalidDueDate
 		}
 	}
-	// First check if task exists
 	_, err := t.repo.GetByID(context.Background(), id)
 	if err != nil {
 		return nil, err
 	}
-	// Task exists, proceed with update
 	if err := t.repo.UpdateFields(context.Background(), id, title, description, status, priority, dueDate, labels, estimated, logged); err != nil {
 		return nil, err
 	}
