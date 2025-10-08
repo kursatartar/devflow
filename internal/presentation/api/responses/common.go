@@ -4,29 +4,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Response, ApiError, Cause
-
-// Cause provides structure for validation errors.
 type Cause struct {
 	Field   string `json:"field,omitempty"`
 	Message string `json:"message"`
 }
 
-// Response defines the standard API response structure.
 type Response struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
-	Error   *APIError   `json:"error,omitempty"` // Embed error details directly
+	Error   *APIError   `json:"error,omitempty"`
 }
 
-// APIError defines the structure for error details in the response.
 type APIError struct {
-	Code      int         `json:"code,omitempty"`      // Internal error code or category
-	Title     string      `json:"title"`               // Short, user-friendly error title
-	Detail    string      `json:"detail"`              // Detailed error message for developers/logs
-	Causes    []Cause     `json:"causes,omitempty"`    // For validation errors
-	Conflicts interface{} `json:"conflicts,omitempty"` // For conflict errors
+	Code      int         `json:"code,omitempty"`
+	Title     string      `json:"title"`
+	Detail    string      `json:"detail"`
+	Causes    []Cause     `json:"causes,omitempty"`
+	Conflicts interface{} `json:"conflicts,omitempty"`
 }
 
 type Envelope map[string]any

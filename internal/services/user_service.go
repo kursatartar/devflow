@@ -1,11 +1,11 @@
 package services
 
 import (
-    "context"
-    "devflow/internal/interfaces"
-    "devflow/internal/models"
-    "strings"
-    "golang.org/x/crypto/bcrypt"
+	"context"
+	"devflow/internal/interfaces"
+	"devflow/internal/models"
+	"golang.org/x/crypto/bcrypt"
+	"strings"
 )
 
 type UserManager struct {
@@ -22,21 +22,21 @@ func NewUserService(repo interfaces.UserRepository) *UserManager {
 }
 
 func (s *UserManager) CreateUser(id, username, email, passwordHash, role, firstName, lastName, avatarURL string) (*models.User, error) {
-    profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
-    u, err := models.NewUser(id, username, email, passwordHash, role, profile)
-    if err != nil {
-        return nil, err
-    }
-    if ok, err := u.IsEmailValid(); err != nil || !ok {
-        if err != nil {
-            return nil, err
-        }
-        return nil, ErrInvalidEmail
-    }
-    if _, err := s.repo.Create(context.Background(), u); err != nil {
-        return nil, err
-    }
-    return u, nil
+	profile := models.Profile{FirstName: firstName, LastName: lastName, AvatarURL: avatarURL}
+	u, err := models.NewUser(id, username, email, passwordHash, role, profile)
+	if err != nil {
+		return nil, err
+	}
+	if ok, err := u.IsEmailValid(); err != nil || !ok {
+		if err != nil {
+			return nil, err
+		}
+		return nil, ErrInvalidEmail
+	}
+	if _, err := s.repo.Create(context.Background(), u); err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 func (s *UserManager) ListUsers() []*models.User {
@@ -89,30 +89,29 @@ func (s *UserManager) DeleteUser(id string) error {
 
 // Auth
 func (s *UserManager) Register(username, email, password, firstName, lastName, avatarURL string) (*models.User, error) {
-    hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-    if err != nil {
-        return nil, err
-    }
-    return s.CreateUser("", username, email, string(hash), "user", firstName, lastName, avatarURL)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	return s.CreateUser("", username, email, string(hash), "user", firstName, lastName, avatarURL)
 }
 
 func (s *UserManager) Authenticate(identifier, password string) (*models.User, error) {
-    // try email first
-    var u *models.User
-    var err error
-    if strings.Contains(identifier, "@") {
-        u, err = s.repo.GetByEmail(context.Background(), identifier)
-    } else {
-        u, err = s.repo.GetByUsername(context.Background(), identifier)
-    }
-    if err != nil {
-        return nil, err
-    }
-    if u == nil {
-        return nil, ErrInvalidCredentials
-    }
-    if err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password)); err != nil {
-        return nil, ErrInvalidCredentials
-    }
-    return u, nil
+	var u *models.User
+	var err error
+	if strings.Contains(identifier, "@") {
+		u, err = s.repo.GetByEmail(context.Background(), identifier)
+	} else {
+		u, err = s.repo.GetByUsername(context.Background(), identifier)
+	}
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, ErrInvalidCredentials
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password)); err != nil {
+		return nil, ErrInvalidCredentials
+	}
+	return u, nil
 }

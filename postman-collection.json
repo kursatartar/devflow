@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"avatar_url\": \"https://example.com/avatar.png\"\n}",
+							"raw": "{\n  \"username\": \"kursat_artar\",\n  \"email\": \"kursat.artar@example.com\",\n  \"password\": \"password123\",\n  \"first_name\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"avatar_url\": \"https://example.com/avatar.png\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -54,7 +54,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"identifier\": \"kursat@example.com\",\n  \"password\": \"password123\"\n}",
+							"raw": "{\n  \"identifier\": \"kursat.artar@example.com\",\n  \"password\": \"password123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -149,7 +149,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"john_doe_updated\",\n  \"email\": \"john.updated@example.com\",\n  \"password_hash\": \"newpassword123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"role\": \"admin\"\n}",
+							"raw": "{\n  \"username\": \"kursat_artar_updated\",\n  \"email\": \"kursat.updated@example.com\",\n  \"password_hash\": \"newpassword123\",\n  \"first_name\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"role\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -192,7 +192,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"jane_smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"password_hash\": \"password123\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"role\": \"user\"\n}",
+							"raw": "{\n  \"username\": \"kursat_artar_2\",\n  \"email\": \"kursat.artar2@example.com\",\n  \"password_hash\": \"password123\",\n  \"first_name\": \"Kürşat\",\n  \"last_name\": \"Artar\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"role\": \"user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

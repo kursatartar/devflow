@@ -7,6 +7,7 @@ import (
 	"devflow/internal/services"
 	"errors"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,6 +16,7 @@ func CreateTask(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
+    validate := validator.New()
     if err := validate.Struct(body); err != nil {
         return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
@@ -65,6 +67,7 @@ func UpdateTask(c *fiber.Ctx) error {
 	if len(c.Body()) == 0 {
 		return responses.ValidationError(c, "request body required")
 	}
+    validate := validator.New()
     if err := validate.Struct(body); err != nil {
         return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }

@@ -4,22 +4,42 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 
 	"devflow/internal/presentation/api/converters"
 	"devflow/internal/presentation/api/requests"
 	"devflow/internal/presentation/api/responses"
 	"devflow/internal/services"
-	"devflow/utils"
 )
+
+func buildValidationCauses(err error) []responses.Cause {
+	out := make([]responses.Cause, 0)
+	if err == nil {
+		return out
+	}
+	var verrs validator.ValidationErrors
+	if errors.As(err, &verrs) {
+		for _, fe := range verrs {
+			out = append(out, responses.Cause{
+				Field:   fe.Field(),
+				Message: fe.Error(),
+			})
+		}
+		return out
+	}
+	out = append(out, responses.Cause{Message: err.Error()})
+	return out
+}
 
 func CreateTeam(c *fiber.Ctx) error {
 	var body requests.CreateTeamReq
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := utils.Validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": utils.BuildValidationCauses(err)})
+    validate := validator.New()
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 
 	members := converters.ToDomainTeamMembers(body.Members)
@@ -72,6 +92,7 @@ func UpdateTeam(c *fiber.Ctx) error {
 	if len(c.Body()) == 0 {
 		return responses.ValidationError(c, "request body required")
 	}
+    validate := validator.New()
     if err := validate.Struct(body); err != nil {
         return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
@@ -100,8 +121,9 @@ func AddTeamMember(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := utils.Validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": utils.BuildValidationCauses(err)})
+    validate := validator.New()
+    if err := validate.Struct(body); err != nil {
+        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
     }
 
 	t, err := teamService.AddMember(id, body.UserID, body.Role)

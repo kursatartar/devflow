@@ -1,13 +1,14 @@
 package handlers
 
 import (
-    "devflow/internal/presentation/api/converters"
-    "devflow/internal/presentation/api/requests"
-    "devflow/internal/presentation/api/responses"
-    "devflow/internal/services"
-    "errors"
-    "fmt"
-    "github.com/gofiber/fiber/v2"
+	"devflow/internal/presentation/api/converters"
+	"devflow/internal/presentation/api/requests"
+	"devflow/internal/presentation/api/responses"
+	"devflow/internal/services"
+	"errors"
+	"fmt"
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
 func CreateUser(c *fiber.Ctx) error {
@@ -15,9 +16,10 @@ func CreateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
-    }
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+	}
 
 	u, err := userService.CreateUser(
 		"",
@@ -63,11 +65,11 @@ func UpdateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
-    }
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+	}
 
-	// First check if user exists
 	_, err := userService.GetUser(id)
 	if err != nil {
 		if errors.Is(err, services.ErrUserNotFound) {
@@ -76,7 +78,6 @@ func UpdateUser(c *fiber.Ctx) error {
 		return responses.Internal(c, err)
 	}
 
-	
 	if err := userService.UpdateUser(
 		id,
 		body.Username,
@@ -137,6 +138,7 @@ func Register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
+	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
 	}
@@ -152,7 +154,6 @@ func Register(c *fiber.Ctx) error {
 		}
 	}
 
-	// Generate token
 	token, err := authService.GenerateToken(u.ID, u.Username, u.Role)
 	if err != nil {
 		return responses.Internal(c, err)
@@ -169,6 +170,7 @@ func Login(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
+	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
 	}
@@ -180,7 +182,6 @@ func Login(c *fiber.Ctx) error {
 		return responses.Internal(c, err)
 	}
 
-	// Generate token
 	token, err := authService.GenerateToken(u.ID, u.Username, u.Role)
 	if err != nil {
 		return responses.Internal(c, err)

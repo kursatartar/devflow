@@ -7,6 +7,7 @@ import (
 	"devflow/internal/services"
 	"errors"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,15 +16,16 @@ func CreateProject(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
-    }
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+	}
 	p, err := projectService.CreateProject(
 		"",
 		body.Name,
 		body.Description,
 		body.OwnerID,
-        body.TeamID,
+		body.TeamID,
 		body.Status,
 		body.TeamMembers,
 		body.IsPrivate,
@@ -36,9 +38,8 @@ func CreateProject(c *fiber.Ctx) error {
 }
 
 func ListProjects(c *fiber.Ctx) error {
-    ps := projectService.ListProjects()
-    // Liste uç noktasında şimdilik team detayını iliştirmiyoruz; sadece project alanları döner
-    return responses.Success(c, "projects fetched successfully", converters.ToProjectListResponse(ps))
+	ps := projectService.ListProjects()
+	return responses.Success(c, "projects fetched successfully", converters.ToProjectListResponse(ps))
 }
 
 func UpdateProject(c *fiber.Ctx) error {
@@ -53,15 +54,16 @@ func UpdateProject(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return responses.ValidationError(c, "invalid json")
 	}
-    if err := validate.Struct(body); err != nil {
-        return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
-    }
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return responses.JSON(c, 400, "validation error", map[string]any{"errors": buildValidationCauses(err)})
+	}
 	p, err := projectService.UpdateProject(
 		id,
 		body.Name,
 		body.Description,
 		body.Status,
-        body.TeamID,
+		body.TeamID,
 		body.TeamMembers,
 		body.IsPrivate,
 		body.TaskWorkflow,
@@ -91,23 +93,22 @@ func DeleteProject(c *fiber.Ctx) error {
 
 func GetProject(c *fiber.Ctx) error {
 	id := c.Params("id")
-    p, err := projectService.GetProject(id)
+	p, err := projectService.GetProject(id)
 	if err != nil {
 		if errors.Is(err, services.ErrProjectNotFound) {
 			return responses.NotFound(c, "project not found")
 		}
 		return responses.Internal(c, err)
 	}
-    // Team bilgisini eklemek için teamService ile sorgula
-    var teamResp *responses.TeamResponse
-    if p.TeamID != "" && teamService != nil {
-        t, terr := teamService.GetTeam(p.TeamID)
-        if terr == nil && t != nil {
-            tr := converters.ToTeamResponse(t)
-            teamResp = &tr
-        }
-    }
-    resp := converters.ToProjectResponse(p)
-    resp.Team = teamResp
-    return responses.Success(c, "project fetched successfully", resp)
+	var teamResp *responses.TeamResponse
+	if p.TeamID != "" && teamService != nil {
+		t, terr := teamService.GetTeam(p.TeamID)
+		if terr == nil && t != nil {
+			tr := converters.ToTeamResponse(t)
+			teamResp = &tr
+		}
+	}
+	resp := converters.ToProjectResponse(p)
+	resp.Team = teamResp
+	return responses.Success(c, "project fetched successfully", resp)
 }
