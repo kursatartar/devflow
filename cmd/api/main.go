@@ -1,17 +1,17 @@
 package main
 
 import (
-    "context"
-    handlers2 "devflow/internal/presentation/api/handlers"
-    "log"
-    "os"
+	"context"
+	handlers2 "devflow/internal/presentation/api/handlers"
+	"log"
+	"os"
 
-    "devflow/internal/config"
-    "devflow/internal/db"
-    repo "devflow/internal/persistence/mongodb/repositories"
-    "devflow/internal/services"
+	"devflow/internal/config"
+	"devflow/internal/db"
+	repo "devflow/internal/persistence/mongodb/repositories"
+	"devflow/internal/services"
 
-    "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {

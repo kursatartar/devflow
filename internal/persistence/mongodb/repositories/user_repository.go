@@ -11,14 +11,34 @@ import (
 
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
+    "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepository struct {
     col *mongo.Collection
 }
 
-func NewUserRepository(db *mongo.Database) *UserRepository {
-    return &UserRepository{col: db.Collection("users")}
+func NewUserRepository(db *mongo.Database) interfaces.UserRepository {
+    repo := &UserRepository{col: db.Collection("users")}
+    repo.createIndexes(context.Background())
+    return repo
+}
+
+func (r *UserRepository) createIndexes(ctx context.Context) {
+    indexes := []mongo.IndexModel{
+        {
+            Keys:    bson.D{{Key: "username", Value: 1}},
+            Options: options.Index().SetUnique(true),
+        },
+        {
+            Keys:    bson.D{{Key: "email", Value: 1}},
+            Options: options.Index().SetUnique(true),
+        },
+        {
+            Keys: bson.D{{Key: "role", Value: 1}},
+        },
+    }
+    _, _ = r.col.Indexes().CreateMany(ctx, indexes)
 }
 
 func (r *UserRepository) Create(ctx context.Context, u *models.User) (string, error) {

@@ -18,7 +18,24 @@ type ProjectRepository struct {
 }
 
 func NewProjectRepository(db *mongo.Database) interfaces.ProjectRepository {
-	return &ProjectRepository{col: db.Collection("projects")}
+	repo := &ProjectRepository{col: db.Collection("projects")}
+	repo.createIndexes(context.Background())
+	return repo
+}
+
+func (r *ProjectRepository) createIndexes(ctx context.Context) {
+	indexes := []mongo.IndexModel{
+		{
+			Keys: bson.D{{Key: "owner_id", Value: 1}},
+		},
+		{
+			Keys: bson.D{{Key: "team_id", Value: 1}},
+		},
+		{
+			Keys: bson.D{{Key: "status", Value: 1}},
+		},
+	}
+	_, _ = r.col.Indexes().CreateMany(ctx, indexes)
 }
 
 func (r *ProjectRepository) Create(ctx context.Context, p *models.Project) (string, error) {

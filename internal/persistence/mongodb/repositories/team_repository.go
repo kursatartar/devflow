@@ -18,7 +18,21 @@ type TeamRepository struct {
 }
 
 func NewTeamRepository(db *mongo.Database) interfaces.TeamRepository {
-	return &TeamRepository{col: db.Collection("teams")}
+	repo := &TeamRepository{col: db.Collection("teams")}
+	repo.createIndexes(context.Background())
+	return repo
+}
+
+func (r *TeamRepository) createIndexes(ctx context.Context) {
+	indexes := []mongo.IndexModel{
+		{
+			Keys: bson.D{{Key: "owner_id", Value: 1}},
+		},
+		{
+			Keys: bson.D{{Key: "name", Value: 1}},
+		},
+	}
+	_, _ = r.col.Indexes().CreateMany(ctx, indexes)
 }
 
 func (r *TeamRepository) Create(ctx context.Context, t *models.Team) (string, error) {
