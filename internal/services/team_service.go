@@ -11,8 +11,8 @@ type TeamManager struct {
 	repo interfaces.TeamRepository
 }
 
-func NewTeamService(repo interfaces.TeamRepository) *TeamManager {
-	return &TeamManager{repo}
+func NewTeamService(repo interfaces.TeamRepository) interfaces.TeamService {
+	return &TeamManager{repo: repo}
 }
 
 func (t *TeamManager) CreateTeam(

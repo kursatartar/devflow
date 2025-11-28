@@ -17,7 +17,7 @@ func (s *UserManager) FilterUsersByRole(role string) []*models.User {
 	return users
 }
 
-func NewUserService(repo interfaces.UserRepository) *UserManager {
+func NewUserService(repo interfaces.UserRepository) interfaces.UserService {
 	return &UserManager{repo: repo}
 }
 
@@ -115,3 +115,5 @@ func (s *UserManager) Authenticate(identifier, password string) (*models.User, e
 	}
 	return u, nil
 }
+
+var _ interfaces.UserService = (*UserManager)(nil)

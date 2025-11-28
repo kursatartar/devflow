@@ -4,16 +4,16 @@ import (
 	"context"
 	"devflow/internal/interfaces"
 	"devflow/internal/models"
-	"time"
 	"github.com/google/uuid"
+	"time"
 )
 
 type TaskManager struct {
 	repo interfaces.TaskRepository
 }
 
-func NewTaskService(repo interfaces.TaskRepository) *TaskManager {
-    return &TaskManager{repo}
+func NewTaskService(repo interfaces.TaskRepository) interfaces.TaskService {
+	return &TaskManager{repo: repo}
 }
 
 func (t *TaskManager) CreateTask(id, title, description, projectID, assignedTo, createdBy, status, priority, dueDate string, labels []string, estimated, logged float64) (*models.Task, error) {
@@ -75,3 +75,5 @@ func (t *TaskManager) GetTask(id string) (*models.Task, error) {
 	}
 	return out, nil
 }
+
+var _ interfaces.TaskService = (*TaskManager)(nil)
