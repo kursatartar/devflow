@@ -12,7 +12,6 @@ func ToProjectResponse(p *models.Project) responses.ProjectResponse {
 		Description:  p.Description,
 		OwnerID:      p.OwnerID,
         TeamID:       p.TeamID,
-		TeamMembers:  p.TeamMembers,
 		Status:       p.Status,
 		IsPrivate:    p.Settings.IsPrivate,
 		TaskWorkflow: p.Settings.TaskWorkflow,

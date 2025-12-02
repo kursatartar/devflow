@@ -3,6 +3,7 @@ package entities
 import (
     "devflow/internal/models"
     "time"
+    "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProjectSettingsEntity struct {
@@ -14,8 +15,8 @@ type ProjectEntity struct {
     ID          string                 `bson:"_id"`
     Name        string                 `bson:"name"`
     Description string                 `bson:"description"`
-    OwnerID     string                 `bson:"owner_id"`
-    TeamID      string                 `bson:"team_id"`
+    OwnerID     primitive.ObjectID     `bson:"owner_id"`
+    TeamID      primitive.ObjectID     `bson:"team_id"`
     Status      string                 `bson:"status"`
     Settings    ProjectSettingsEntity  `bson:"settings"`
     CreatedAt   time.Time              `bson:"created_at"`
@@ -26,12 +27,23 @@ func FromDomainProject(m *models.Project) *ProjectEntity {
     if m == nil {
         return nil
     }
+    var ownerID, teamID primitive.ObjectID
+    if m.OwnerID != "" {
+        if oid, err := primitive.ObjectIDFromHex(m.OwnerID); err == nil {
+            ownerID = oid
+        }
+    }
+    if m.TeamID != "" {
+        if oid, err := primitive.ObjectIDFromHex(m.TeamID); err == nil {
+            teamID = oid
+        }
+    }
     return &ProjectEntity{
         ID:          m.ID,
         Name:        m.Name,
         Description: m.Description,
-        OwnerID:     m.OwnerID,
-        TeamID:      m.TeamID,
+        OwnerID:     ownerID,
+        TeamID:      teamID,
         Status:      m.Status,
         Settings: ProjectSettingsEntity{
             IsPrivate:    m.Settings.IsPrivate,
@@ -50,8 +62,8 @@ func (e *ProjectEntity) ToDomainProject() *models.Project {
         ID:          e.ID,
         Name:        e.Name,
         Description: e.Description,
-        OwnerID:     e.OwnerID,
-        TeamID:      e.TeamID,
+        OwnerID:     e.OwnerID.Hex(),
+        TeamID:      e.TeamID.Hex(),
         Status:      e.Status,
         Settings: models.ProjectSettings{
             IsPrivate:    e.Settings.IsPrivate,

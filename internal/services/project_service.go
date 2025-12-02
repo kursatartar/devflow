@@ -15,11 +15,11 @@ func NewProjectService(repo interfaces.ProjectRepository) interfaces.ProjectServ
 	return &ProjectManager{repo: repo}
 }
 
-func (p *ProjectManager) CreateProject(id, name, description, ownerID, teamID, status string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+func (p *ProjectManager) CreateProject(id, name, description, ownerID, teamID, status string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
 	if id == "" {
 		id = uuid.NewString()
 	}
-	pr := models.NewProject(id, name, description, ownerID, teamID, teamMembers, status, isPrivate, taskWorkflow)
+	pr := models.NewProject(id, name, description, ownerID, teamID, status, isPrivate, taskWorkflow)
 	_, err := p.repo.Create(context.Background(), pr)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (p *ProjectManager) FilterProjectsByOwner(ownerID string) []*models.Project
 	return out
 }
 
-func (p *ProjectManager) UpdateProject(id string, name string, description string, status string, teamID string, teamMembers []string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
+func (p *ProjectManager) UpdateProject(id string, name string, description string, status string, teamID string, isPrivate bool, taskWorkflow []string) (*models.Project, error) {
 	_, err := p.repo.GetByID(context.Background(), id)
 	if err != nil {
 		return nil, err

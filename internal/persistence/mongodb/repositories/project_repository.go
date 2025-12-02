@@ -10,6 +10,7 @@ import (
 	"devflow/internal/persistence/mongodb/entities"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -82,7 +83,11 @@ func (r *ProjectRepository) List(ctx context.Context) ([]*models.Project, error)
 }
 
 func (r *ProjectRepository) FilterByOwner(ctx context.Context, ownerID string) ([]*models.Project, error) {
-	cur, err := r.col.Find(ctx, bson.M{"owner_id": ownerID})
+	ownerObjID, err := primitive.ObjectIDFromHex(ownerID)
+	if err != nil {
+		return nil, err
+	}
+	cur, err := r.col.Find(ctx, bson.M{"owner_id": ownerObjID})
 	if err != nil {
 		return nil, err
 	}
@@ -116,10 +121,18 @@ func (r *ProjectRepository) UpdateFields(ctx context.Context, id string, name, d
 		set["settings.task_workflow"] = *taskWorkflow
 	}
 	if ownerID != nil {
-		set["owner_id"] = *ownerID
+		ownerObjID, err := primitive.ObjectIDFromHex(*ownerID)
+		if err != nil {
+			return err
+		}
+		set["owner_id"] = ownerObjID
 	}
 	if teamID != nil {
-		set["team_id"] = *teamID
+		teamObjID, err := primitive.ObjectIDFromHex(*teamID)
+		if err != nil {
+			return err
+		}
+		set["team_id"] = teamObjID
 	}
 	_, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": set})
 	return err

@@ -3,6 +3,7 @@ package entities
 import (
     "devflow/internal/models"
     "time"
+    "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TimeTrackingEntity struct {
@@ -14,9 +15,9 @@ type TaskEntity struct {
     ID           string             `bson:"_id"`
     Title        string             `bson:"title"`
     Description  string             `bson:"description"`
-    ProjectID    string             `bson:"project_id"`
-    AssignedTo   string             `bson:"assigned_to"`
-    CreatedBy    string             `bson:"created_by"`
+    ProjectID    primitive.ObjectID `bson:"project_id"`
+    AssignedTo   primitive.ObjectID `bson:"assigned_to"`
+    CreatedBy    primitive.ObjectID `bson:"created_by"`
     Status       string             `bson:"status"`
     Priority     string             `bson:"priority"`
     Labels       []string           `bson:"labels"`
@@ -30,13 +31,29 @@ func FromDomainTask(m *models.Task) *TaskEntity {
     if m == nil {
         return nil
     }
+    var projectID, assignedTo, createdBy primitive.ObjectID
+    if m.ProjectID != "" {
+        if oid, err := primitive.ObjectIDFromHex(m.ProjectID); err == nil {
+            projectID = oid
+        }
+    }
+    if m.AssignedTo != "" {
+        if oid, err := primitive.ObjectIDFromHex(m.AssignedTo); err == nil {
+            assignedTo = oid
+        }
+    }
+    if m.CreatedBy != "" {
+        if oid, err := primitive.ObjectIDFromHex(m.CreatedBy); err == nil {
+            createdBy = oid
+        }
+    }
     return &TaskEntity{
         ID:          m.ID,
         Title:       m.Title,
         Description: m.Description,
-        ProjectID:   m.ProjectID,
-        AssignedTo:  m.AssignedTo,
-        CreatedBy:   m.CreatedBy,
+        ProjectID:   projectID,
+        AssignedTo:  assignedTo,
+        CreatedBy:   createdBy,
         Status:      m.Status,
         Priority:    m.Priority,
         Labels:      m.Labels,
@@ -58,9 +75,9 @@ func (e *TaskEntity) ToDomainTask() *models.Task {
         ID:          e.ID,
         Title:       e.Title,
         Description: e.Description,
-        ProjectID:   e.ProjectID,
-        AssignedTo:  e.AssignedTo,
-        CreatedBy:   e.CreatedBy,
+        ProjectID:   e.ProjectID.Hex(),
+        AssignedTo:  e.AssignedTo.Hex(),
+        CreatedBy:   e.CreatedBy.Hex(),
         Status:      e.Status,
         Priority:    e.Priority,
         Labels:      e.Labels,

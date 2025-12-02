@@ -27,7 +27,6 @@ func CreateProject(c *fiber.Ctx) error {
 		body.OwnerID,
 		body.TeamID,
 		body.Status,
-		body.TeamMembers,
 		body.IsPrivate,
 		body.TaskWorkflow,
 	)
@@ -64,7 +63,6 @@ func UpdateProject(c *fiber.Ctx) error {
 		body.Description,
 		body.Status,
 		body.TeamID,
-		body.TeamMembers,
 		body.IsPrivate,
 		body.TaskWorkflow,
 	)

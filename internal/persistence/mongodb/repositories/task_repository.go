@@ -1,15 +1,16 @@
 package repositories
 
 import (
-	"context"
-	"errors"
-	"time"
+    "context"
+    "errors"
+    "time"
 
-	"devflow/internal/interfaces"
-	"devflow/internal/models"
-	"devflow/internal/persistence/mongodb/entities"
+    "devflow/internal/interfaces"
+    "devflow/internal/models"
+    "devflow/internal/persistence/mongodb/entities"
 
     "go.mongodb.org/mongo-driver/bson"
+    "go.mongodb.org/mongo-driver/bson/primitive"
     "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -84,20 +85,24 @@ func (r *TaskRepository) List(ctx context.Context) ([]*models.Task, error) {
 }
 
 func (r *TaskRepository) FilterByProject(ctx context.Context, projectID string) ([]*models.Task, error) {
-	cur, err := r.col.Find(ctx, bson.M{"project_id": projectID})
-	if err != nil {
-		return nil, err
-	}
-	defer cur.Close(ctx)
-	var out []*models.Task
-	for cur.Next(ctx) {
-		var e entities.TaskEntity
-		if err := cur.Decode(&e); err != nil {
-			return nil, err
-		}
-		out = append(out, e.ToDomainTask())
-	}
-	return out, cur.Err()
+    projectObjID, err := primitive.ObjectIDFromHex(projectID)
+    if err != nil {
+        return nil, err
+    }
+    cur, err := r.col.Find(ctx, bson.M{"project_id": projectObjID})
+    if err != nil {
+        return nil, err
+    }
+    defer cur.Close(ctx)
+    var out []*models.Task
+    for cur.Next(ctx) {
+        var e entities.TaskEntity
+        if err := cur.Decode(&e); err != nil {
+            return nil, err
+        }
+        out = append(out, e.ToDomainTask())
+    }
+    return out, cur.Err()
 }
 
 func (r *TaskRepository) UpdateFields(ctx context.Context, id string, title, description, status, priority, dueDate *string, labels *[]string, estimated, logged *float64) error {

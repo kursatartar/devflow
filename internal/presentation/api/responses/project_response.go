@@ -8,7 +8,6 @@ type ProjectResponse struct {
 	Description  string    `json:"description"`
 	OwnerID      string    `json:"owner_id"`
     TeamID       string    `json:"team_id"`
-	TeamMembers  []string  `json:"team_members"`
 	Status       string    `json:"status"`
 	IsPrivate    bool      `json:"is_private"`
 	TaskWorkflow []string  `json:"task_workflow"`

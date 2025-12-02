@@ -10,6 +10,7 @@ import (
 	"devflow/internal/persistence/mongodb/entities"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -96,21 +97,33 @@ func (r *TeamRepository) UpdateFields(ctx context.Context, id string, name, desc
 }
 
 func (r *TeamRepository) AddMember(ctx context.Context, teamID, userID, role string) error {
-	_, err := r.col.UpdateOne(ctx, bson.M{"_id": teamID},
-		bson.M{"$push": bson.M{"members": bson.M{"user_id": userID, "role": role, "joined_at": time.Now()}}, "$set": bson.M{"updated_at": time.Now()}},
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	_, err = r.col.UpdateOne(ctx, bson.M{"_id": teamID},
+		bson.M{"$push": bson.M{"members": bson.M{"user_id": userObjID, "role": role, "joined_at": time.Now()}}, "$set": bson.M{"updated_at": time.Now()}},
 	)
 	return err
 }
 
 func (r *TeamRepository) RemoveMember(ctx context.Context, teamID, userID string) error {
-	_, err := r.col.UpdateOne(ctx, bson.M{"_id": teamID},
-		bson.M{"$pull": bson.M{"members": bson.M{"user_id": userID}}, "$set": bson.M{"updated_at": time.Now()}},
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	_, err = r.col.UpdateOne(ctx, bson.M{"_id": teamID},
+		bson.M{"$pull": bson.M{"members": bson.M{"user_id": userObjID}}, "$set": bson.M{"updated_at": time.Now()}},
 	)
 	return err
 }
 
 func (r *TeamRepository) ChangeMemberRole(ctx context.Context, teamID, userID, role string) error {
-	_, err := r.col.UpdateOne(ctx, bson.M{"_id": teamID, "members.user_id": userID},
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	_, err = r.col.UpdateOne(ctx, bson.M{"_id": teamID, "members.user_id": userObjID},
 		bson.M{"$set": bson.M{"members.$.role": role, "updated_at": time.Now()}},
 	)
 	return err
@@ -122,7 +135,11 @@ func (r *TeamRepository) Delete(ctx context.Context, id string) error {
 }
 
 func (r *TeamRepository) FilterByOwner(ctx context.Context, ownerID string) ([]*models.Team, error) {
-	cur, err := r.col.Find(ctx, bson.M{"owner_id": ownerID})
+	ownerObjID, err := primitive.ObjectIDFromHex(ownerID)
+	if err != nil {
+		return nil, err
+	}
+	cur, err := r.col.Find(ctx, bson.M{"owner_id": ownerObjID})
 	if err != nil {
 		return nil, err
 	}
